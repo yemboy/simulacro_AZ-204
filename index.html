@@ -192,6 +192,9 @@ en:{
 };
 
 const EXAMS = {
+ 0:{time:30*60,
+    es:{name:"Ronda rápida — 15 aleatorias", desc:"15 preguntas al azar del banco combinado de los 3 exámenes (127 únicas; se excluyen las repeticiones marcadas del Mock 3). Cada ejecución genera una ronda distinta. Tiempo: 30 min · Meta: 12/15."},
+    en:{name:"Quick round — 15 random", desc:"15 random questions from the combined bank of all 3 exams (127 unique; the flagged repeats from Mock 3 are excluded). Each run generates a different round. Time: 30 min · Target: 12/15."}},
  1:{time:100*60,
     es:{name:"Simulacro #1", desc:"50 preguntas estilo examen real (escenarios, ordenar pasos, serie sí/no bloqueada). Blueprint desde 14-ene-2026: Compute 15 · Integración 11 · Storage 9 · Seguridad 10 · Monitoreo 5. Tiempo: 100 min · Meta: 40/50."},
     en:{name:"Practice Exam #1", desc:"50 real-exam-style questions (scenarios, step ordering, locked yes/no series). Blueprint as of Jan 14, 2026: Compute 15 · Integration 11 · Storage 9 · Security 10 · Monitoring 5. Time: 100 min · Target: 40/50."}},
@@ -1296,7 +1299,7 @@ function renderStart(){
     + '<h2>'+s.rulesH+'</h2><ul class="rules">'
     + s.rules.map(r=>'<li>'+r+'</li>').join('')
     + '</ul><h2>'+s.chooseExam+'</h2>';
-  for(const id of [1,2,3]){
+  for(const id of [0,1,2,3]){
     const m = EXAMS[id][lang];
     h += '<div style="border:1.5px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:12px;">'
        + '<strong>'+m.name+'</strong>'
@@ -1308,8 +1311,18 @@ function renderStart(){
 
 /* ================= TIMER ================= */
 function startExam(id){
-  curExam = id || 1;
-  Q = ({1:EXAM1, 2:EXAM2, 3:EXAM3})[curExam];
+  curExam = (id===undefined) ? 1 : id;
+  if(curExam===0){
+    const skip = new Set([11,16,18,20,31]); // repeticiones marcadas del Mock 3
+    const pool = [...EXAM1, ...EXAM2, ...EXAM3.filter(q=>!skip.has(q.n))];
+    for(let i=pool.length-1; i>0; i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    Q = pool.slice(0,15).map((q,i)=>Object.assign({}, q, {n:i+1}));
+  } else {
+    Q = ({1:EXAM1, 2:EXAM2, 3:EXAM3})[curExam];
+  }
   examTime = EXAMS[curExam].time;
   remaining = examTime;
   document.getElementById("timer").textContent = String(Math.floor(examTime/60)).padStart(2,"0")+":00";
@@ -1500,6 +1513,7 @@ function renderResults(){
   for(const q of Q) totals[q.dom]++;
   h += '<h2 style="margin-top:18px;">'+s.domH+'</h2><table><tr><th>'+s.domCol+'</th><th>'+s.ptsCol+'</th><th>%</th></tr>';
   for(const d of ["C","I","S","G","M"]){
+    if(totals[d]===0) continue;
     const pct = Math.round(100*domScore[d]/totals[d]);
     h += '<tr><td>'+s.domNames[d]+'</td><td>'+domScore[d]+' / '+totals[d]+'</td>'
        + '<td style="color:'+(pct>=80?"var(--ok)":"var(--bad)")+';font-weight:600;">'+pct+'%</td></tr>';
@@ -1536,7 +1550,7 @@ function filterRev(onlyWrong){
   });
 }
 
-/* ================== INIT ================== */
+/* ================= INIT ================= */
 renderStart();
 </script>
 </body>
