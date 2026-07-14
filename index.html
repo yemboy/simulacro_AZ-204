@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AZ-204 Practice Exams</title>
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1a2332; --muted:#5c6b80;
+    --accent:#0b5cad; --accent2:#0a4d91; --ok:#1a7f4e; --bad:#c0392b;
+    --warn:#b7791f; --border:#dbe2ec; --lock:#8a93a3;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--ink); line-height:1.5;}
+  .wrap{max-width:1100px; margin:0 auto; padding:16px;}
+  .card{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:24px;}
+  h1{font-size:1.4rem; margin-bottom:8px;}
+  h2{font-size:1.1rem; margin-bottom:8px;}
+  .muted{color:var(--muted); font-size:.92rem;}
+  button{font:inherit; cursor:pointer; border:none; border-radius:8px;}
+  .btn{background:var(--accent); color:#fff; padding:10px 20px; font-weight:600;}
+  .btn:hover{background:var(--accent2);}
+  .btn.sec{background:#e8edf4; color:var(--ink);}
+  .btn.danger{background:var(--bad); color:#fff;}
+  .btn:disabled{opacity:.45; cursor:not-allowed;}
+  .langbtn{background:#fff; border:1.5px solid var(--accent); color:var(--accent); padding:6px 14px; font-weight:700; font-size:.85rem; border-radius:20px;}
+  .langbtn:hover{background:#eef4fb;}
+  .toprow{display:flex; justify-content:space-between; align-items:flex-start; gap:12px;}
+  /* Header bar */
+  #bar{position:sticky; top:0; z-index:10; background:var(--card); border-bottom:2px solid var(--border); padding:10px 16px; display:flex; align-items:center; gap:12px;}
+  #timer{font-variant-numeric:tabular-nums; font-weight:700; font-size:1.25rem; padding:4px 12px; border-radius:8px; background:#e8edf4;}
+  #timer.low{background:#fdecea; color:var(--bad);}
+  #prog{flex:1; color:var(--muted); font-size:.9rem;}
+  /* Layout */
+  #examGrid{display:grid; grid-template-columns:1fr 230px; gap:16px; margin-top:16px;}
+  @media(max-width:820px){#examGrid{grid-template-columns:1fr;}}
+  /* Question */
+  .qdom{display:inline-block; font-size:.75rem; font-weight:700; letter-spacing:.4px; text-transform:uppercase; color:var(--accent); background:#e7f0fa; padding:2px 10px; border-radius:20px; margin-bottom:10px;}
+  .qtext{font-size:1.02rem; margin-bottom:16px; white-space:pre-wrap;}
+  .qtext pre{background:#f0f3f8; border:1px solid var(--border); border-radius:8px; padding:12px; overflow-x:auto; font-size:.88rem; margin:10px 0; white-space:pre;}
+  code{background:#f0f3f8; padding:1px 5px; border-radius:4px; font-size:.88em;}
+  .scenario{background:#fff8e8; border:1px solid #edd9a3; border-radius:8px; padding:12px 14px; margin-bottom:14px; font-size:.95rem;}
+  .locknote{background:#fdecea; border:1px solid #f0b8b0; border-radius:8px; padding:8px 12px; margin-bottom:12px; font-size:.88rem; color:var(--bad);}
+  .opt{display:flex; gap:10px; align-items:flex-start; border:1.5px solid var(--border); border-radius:8px; padding:12px 14px; margin-bottom:10px; cursor:pointer; transition:border-color .12s, background .12s;}
+  .opt:hover{border-color:var(--accent);}
+  .opt.sel{border-color:var(--accent); background:#eef4fb;}
+  .opt.dis{cursor:not-allowed; opacity:.65;}
+  .opt input{margin-top:4px; accent-color:var(--accent);}
+  .opt .lbl{flex:1;}
+  .opt code{white-space:normal; word-break:break-word;}
+  /* Order type */
+  .ordItem{display:flex; align-items:center; gap:12px; border:1.5px solid var(--border); border-radius:8px; padding:12px 14px; margin-bottom:10px; cursor:pointer;}
+  .ordItem:hover{border-color:var(--accent);}
+  .ordItem .pos{min-width:34px; height:34px; border-radius:50%; background:#e8edf4; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--muted);}
+  .ordItem.done{border-color:var(--accent); background:#eef4fb;}
+  .ordItem.done .pos{background:var(--accent); color:#fff;}
+  /* Nav grid */
+  #navgrid{display:grid; grid-template-columns:repeat(5,1fr); gap:6px;}
+  #navgrid button{aspect-ratio:1; border:1.5px solid var(--border); background:#fff; border-radius:6px; font-size:.82rem; font-weight:600; color:var(--muted);}
+  #navgrid button.answered{background:#dcebdd; border-color:#9ec4a4; color:var(--ok);}
+  #navgrid button.current{border-color:var(--accent); background:var(--accent); color:#fff;}
+  #navgrid button.lockedq{background:#e9ebef; border-color:var(--lock); color:var(--lock);}
+  .side .card{padding:16px;}
+  .legend{font-size:.78rem; color:var(--muted); margin-top:10px; line-height:1.7;}
+  .dot{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:5px; vertical-align:middle;}
+  .navrow{display:flex; gap:10px; justify-content:space-between; margin-top:18px;}
+  /* Results */
+  table{width:100%; border-collapse:collapse; margin:14px 0;}
+  th,td{padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); font-size:.92rem;}
+  th{color:var(--muted); font-weight:600;}
+  .score{font-size:2.4rem; font-weight:800;}
+  .pass{color:var(--ok);} .fail{color:var(--bad);}
+  .rev{border:1px solid var(--border); border-radius:8px; padding:14px 16px; margin-bottom:12px;}
+  .rev.wrong{border-left:4px solid var(--bad);}
+  .rev.right{border-left:4px solid var(--ok);}
+  .rev .qn{font-weight:700; margin-bottom:6px;}
+  .rev .exp{background:#f0f6ee; border-radius:6px; padding:8px 12px; margin-top:8px; font-size:.9rem;}
+  .rev .yours{font-size:.92rem; margin-top:6px;}
+  .tag{font-size:.72rem; font-weight:700; padding:2px 8px; border-radius:12px; margin-left:8px; vertical-align:middle;}
+  .tag.ok{background:#dcebdd; color:var(--ok);} .tag.ko{background:#fdecea; color:var(--bad);}
+  #ansString{width:100%; font-family:monospace; font-size:.82rem; padding:10px; border:1px solid var(--border); border-radius:8px; margin-top:8px; background:#f8f9fb;}
+  .filterrow{margin:12px 0;}
+  .hidden{display:none;}
+  ul.rules{margin:12px 0 18px 22px;}
+  ul.rules li{margin-bottom:6px;}
+</style>
+</head>
+<body>
+
+<div id="bar" class="hidden">
+  <div id="timer">100:00</div>
+  <div id="prog"></div>
+  <button class="langbtn" onclick="toggleLang()" id="langBar"></button>
+  <button class="btn danger" onclick="confirmSubmit()" id="submitBar"></button>
+</div>
+
+<div class="wrap">
+  <div id="start" class="card" style="margin-top:24px;"></div>
+  <div id="exam" class="hidden">
+    <div id="examGrid">
+      <div class="card" id="qcard"></div>
+      <div class="side">
+        <div class="card">
+          <h2 style="font-size:.95rem;" id="navTitle"></h2>
+          <div id="navgrid"></div>
+          <div class="legend" id="legend"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="results" class="hidden" style="margin-top:24px;"></div>
+</div>
+
+<script>
+"use strict";
+/* ================= UI STRINGS ================= */
+const L = {
+es:{
+  langBtn:"English",
+  title:"AZ-204 — Developing Solutions for Microsoft Azure",
+  chooseExam:"Elige tu examen",
+  blueprint:"Blueprint (skills measured desde 14-ene-2026): Compute 30% (15 pts) · Integración 22% (11 pts) · Storage 18% (9 pts) · Seguridad 20% (10 pts) · Monitoreo 10% (5 pts)",
+  rulesH:"Reglas",
+  rules:[
+    "<strong>Tiempo límite: 2 minutos por pregunta</strong> (indicado en cada examen). El cronómetro inicia al pulsar el botón y el examen se entrega solo al agotarse.",
+    "50 preguntas: opción única, selección múltiple, ordenar pasos y una serie \"¿Cumple la solución el objetivo?\" donde <strong>al salir de una pregunta de la serie tu respuesta queda bloqueada</strong>.",
+    "Sin documentación, sin buscar nada.",
+    "Meta mínima: <strong>80%</strong> (indicada en cada examen). El corte real es 700/1000 escalado, pero presentarse con margen justo es presentarse a perder."
+  ],
+  start:"Iniciar simulacro",
+  navTitle:"Preguntas",
+  legend:['Respondida','Pendiente','Bloqueada (serie)'],
+  prev:"&larr; Anterior", next:"Siguiente &rarr;",
+  submit:"Entregar examen",
+  selectN:n=>"Selecciona exactamente "+n+" opciones.",
+  backMenu:"Volver al menú",
+  resetOrder:"Reiniciar orden",
+  seriesLocked:"Respuesta bloqueada: las preguntas de esta serie no admiten cambios.",
+  progress:(i,t,a)=>"Pregunta "+i+" de "+t+" · "+a+" respondidas",
+  confirmUn:n=>"Tienes "+n+" pregunta(s) sin responder. ¿Entregar de todos modos?",
+  confirmOk:"¿Entregar el examen?",
+  autoNote:"Tiempo agotado: el examen se entregó automáticamente.",
+  resultH:"Resultado",
+  passMsg:(t,n)=>"≥ "+t+"/"+n+": por encima de la meta mínima del 80%.",
+  failMsg:(t,n)=>"Por debajo de la meta de "+t+"/"+n+" (80%). No agendes el examen todavía: revisa los fallos por dominio abajo.",
+  timeUsed:(m,s,t)=>"Tiempo usado: "+m+" min "+s+" s de "+t+" min.",
+  domH:"Desglose por dominio", domCol:"Dominio", ptsCol:"Puntos",
+  yourAnsH:"Tus respuestas (formato del simulacro)",
+  viewAll:"Ver todas", viewWrong:n=>"Ver solo falladas ("+n+")",
+  correct:"Correcta", incorrect:"Incorrecta",
+  yourAns:"Tu respuesta", corrAns:"Correcta",
+  unanswered:"—sin responder—",
+  domNames:{C:"Compute",I:"Integración",S:"Storage",G:"Seguridad",M:"Monitoreo"}
+},
+en:{
+  langBtn:"Español",
+  title:"AZ-204 — Developing Solutions for Microsoft Azure",
+  chooseExam:"Choose your exam",
+  blueprint:"Blueprint (skills measured as of Jan 14, 2026): Compute 30% (15 pts) · Integration 22% (11 pts) · Storage 18% (9 pts) · Security 20% (10 pts) · Monitoring 10% (5 pts)",
+  rulesH:"Rules",
+  rules:[
+    "<strong>Time limit: 2 minutes per question</strong> (shown on each exam). The timer starts when you press the button and the exam auto-submits when time runs out.",
+    "50 questions: single choice, multiple selection, ordering steps, and a \"Does the solution meet the goal?\" series where <strong>leaving a series question locks your answer</strong>.",
+    "No documentation, no searching.",
+    "Minimum target: <strong>80%</strong> (shown on each exam). The real cut score is a scaled 700/1000, but showing up with a thin margin is showing up to lose."
+  ],
+  start:"Start exam",
+  navTitle:"Questions",
+  legend:['Answered','Pending','Locked (series)'],
+  prev:"&larr; Previous", next:"Next &rarr;",
+  submit:"Submit exam",
+  selectN:n=>"Select exactly "+n+" options.",
+  backMenu:"Back to menu",
+  resetOrder:"Reset order",
+  seriesLocked:"Answer locked: questions in this series cannot be changed.",
+  progress:(i,t,a)=>"Question "+i+" of "+t+" · "+a+" answered",
+  confirmUn:n=>"You have "+n+" unanswered question(s). Submit anyway?",
+  confirmOk:"Submit the exam?",
+  autoNote:"Time is up: the exam was submitted automatically.",
+  resultH:"Result",
+  passMsg:(t,n)=>"≥ "+t+"/"+n+": above the 80% minimum target.",
+  failMsg:(t,n)=>"Below the "+t+"/"+n+" (80%) target. Do not schedule the exam yet: review your misses by domain below.",
+  timeUsed:(m,s,t)=>"Time used: "+m+" min "+s+" s of "+t+" min.",
+  domH:"Breakdown by domain", domCol:"Domain", ptsCol:"Points",
+  yourAnsH:"Your answers (practice-exam format)",
+  viewAll:"View all", viewWrong:n=>"View missed only ("+n+")",
+  correct:"Correct", incorrect:"Incorrect",
+  yourAns:"Your answer", corrAns:"Correct",
+  unanswered:"—unanswered—",
+  domNames:{C:"Compute",I:"Integration",S:"Storage",G:"Security",M:"Monitoring"}
+}
+};
+
+const EXAMS = {
+ 1:{time:100*60,
+    es:{name:"Simulacro #1", desc:"50 preguntas estilo examen real (escenarios, ordenar pasos, serie sí/no bloqueada). Blueprint desde 14-ene-2026: Compute 15 · Integración 11 · Storage 9 · Seguridad 10 · Monitoreo 5. Tiempo: 100 min · Meta: 40/50."},
+    en:{name:"Practice Exam #1", desc:"50 real-exam-style questions (scenarios, step ordering, locked yes/no series). Blueprint as of Jan 14, 2026: Compute 15 · Integration 11 · Storage 9 · Security 10 · Monitoring 5. Time: 100 min · Target: 40/50."}},
+ 2:{time:100*60,
+    es:{name:"Mock Exam #2", desc:"Banco de repaso estilo knowledge check, verificado contra Microsoft Learn (6 ítems corregidos o actualizados). Distribución: Compute 13 · Storage 9 · Seguridad 10 · Integración 12 · Monitoreo/Optimización 6. No sigue los pesos del blueprint. Tiempo: 100 min · Meta: 40/50."},
+    en:{name:"Mock Exam #2", desc:"Knowledge-check-style review bank, verified against Microsoft Learn (6 items corrected or updated). Distribution: Compute 13 · Storage 9 · Security 10 · Integration 12 · Monitoring/Optimization 6. Does not follow blueprint weights. Time: 100 min · Target: 40/50."}},
+ 3:{time:64*60,
+    es:{name:"Mock Exam #3", desc:"32 preguntas estilo escenario, verificadas contra Microsoft Learn: 4 ítems corregidos (P15 Graph activities, P21 custom handler, P22 blob pattern, P23 log tail) y 5 repeticiones de otros exámenes marcadas en su explicación (P11, P16, P18, P20, P31). Distribución: Compute 7 · Integración 10 · Storage 5 · Seguridad 6 · Monitoreo/Optimización 4. Tiempo: 64 min · Meta: 26/32."},
+    en:{name:"Mock Exam #3", desc:"32 scenario-style questions, verified against Microsoft Learn: 4 items corrected (Q15 Graph activities, Q21 custom handler, Q22 blob pattern, Q23 log tail) and 5 repeats from the other exams flagged in their explanations (Q11, Q16, Q18, Q20, Q31). Distribution: Compute 7 · Integration 10 · Storage 5 · Security 6 · Monitoring/Optimization 4. Time: 64 min · Target: 26/32."}}
+};
+
+const SERIES = {
+  daemon:{
+    es:{
+      title:'Serie: "¿Cumple la solución el objetivo?" (preguntas 24–26)',
+      text:'<strong>Escenario:</strong> Un servicio daemon en segundo plano (sin usuario interactivo) debe leer los perfiles de todos los usuarios del tenant mediante Microsoft Graph.',
+      note:'Pregunta de serie: al avanzar a otra pregunta, tu respuesta quedará <strong>bloqueada</strong> y no podrás cambiarla.'
+    },
+    en:{
+      title:'Series: "Does the solution meet the goal?" (questions 24–26)',
+      text:'<strong>Scenario:</strong> A background daemon service (no interactive user) must read the profiles of all users in the tenant through Microsoft Graph.',
+      note:'Series question: once you move to another question, your answer will be <strong>locked</strong> and cannot be changed.'
+    }
+  }
+};
+
+/* ================= QUESTIONS =================
+   en.opts omitted => reuses es.opts (identical technical options) */
+const EXAM1 = [
+{n:1, dom:"C", type:"single", ans:"A",
+ es:{text:"Desarrollas en una máquina donde no está permitido instalar Docker. Necesitas construir una imagen de contenedor desde un Dockerfile y publicarla en Azure Container Registry en un solo paso. ¿Qué comando usas?",
+  opts:{A:"<code>az acr build --registry miregistro --image app:v1 .</code>", B:"<code>az acr import --name miregistro --source app:v1</code>", C:"<code>docker build -t app:v1 . && docker push miregistro.azurecr.io/app:v1</code>", D:"<code>az acr task logs --registry miregistro</code>"},
+  exp:"<code>az acr build</code> ejecuta el build en la nube (ACR Tasks) y publica la imagen en el registro sin necesitar Docker local. <code>import</code> copia imágenes existentes; la opción C requiere Docker."},
+ en:{text:"You develop on a machine where installing Docker is not allowed. You need to build a container image from a Dockerfile and publish it to Azure Container Registry in a single step. Which command do you use?",
+  exp:"<code>az acr build</code> runs the build in the cloud (ACR Tasks) and pushes the image to the registry without local Docker. <code>import</code> copies existing images; option C requires Docker installed."}},
+
+{n:2, dom:"S", type:"single", ans:"C",
+ es:{text:"Una app de e-commerce usa Azure Cosmos DB. Requisito: cada usuario debe leer sus propias escrituras (por ejemplo, ver inmediatamente el artículo que agregó a su carrito), con la mayor disponibilidad y menor latencia posibles. No se requiere que otros usuarios vean esas escrituras al instante. ¿Qué nivel de consistencia configuras?",
+  opts:{A:"Strong", B:"Bounded Staleness", C:"Session", D:"Eventual"},
+  exp:"Session garantiza read-your-own-writes dentro de la misma sesión con latencia y disponibilidad casi óptimas. Strong y Bounded Staleness sacrifican latencia/disponibilidad; Eventual no garantiza leer tus propias escrituras."},
+ en:{text:"An e-commerce app uses Azure Cosmos DB. Requirement: each user must read their own writes (for example, immediately see the item they added to their cart), with the highest availability and lowest latency possible. Other users are not required to see those writes instantly. Which consistency level do you configure?",
+  exp:"Session guarantees read-your-own-writes within the same session with near-optimal latency and availability. Strong and Bounded Staleness trade off latency/availability; Eventual does not guarantee reading your own writes."}},
+
+{n:3, dom:"G", type:"single", ans:"C",
+ es:{text:"Debes generar una SAS para que una app cliente suba blobs. El equipo de seguridad exige que la firma se base en credenciales de Microsoft Entra ID y no en las claves de la cuenta de almacenamiento. ¿Qué tipo de SAS creas?",
+  opts:{A:"Account SAS", B:"Service SAS", C:"User delegation SAS", D:"SAS ad hoc firmada con la account key"},
+  exp:"La user delegation SAS se firma con una user delegation key obtenida vía Microsoft Entra ID. Account SAS y service SAS se firman con las claves de la cuenta."},
+ en:{text:"You must generate a SAS so a client app can upload blobs. The security team requires the signature to be based on Microsoft Entra ID credentials and not on the storage account keys. Which SAS type do you create?",
+  opts:{A:"Account SAS", B:"Service SAS", C:"User delegation SAS", D:"Ad hoc SAS signed with the account key"},
+  exp:"A user delegation SAS is signed with a user delegation key obtained through Microsoft Entra ID. Account SAS and service SAS are signed with the account keys."}},
+
+{n:4, dom:"I", type:"single", ans:"B",
+ es:{text:"Una startup quiere exponer sus APIs mediante Azure API Management con facturación por ejecución, escalado automático integrado y sin pagar infraestructura dedicada. No necesitan developer portal ni aislamiento de red. ¿Qué tier eliges?",
+  opts:{A:"Developer", B:"Consumption", C:"Basic", D:"Premium"},
+  exp:"Consumption es el tier serverless de APIM: pago por ejecución, autoescalado integrado, sin infraestructura dedicada y sin developer portal."},
+ en:{text:"A startup wants to expose its APIs through Azure API Management with per-execution billing, built-in autoscaling, and no dedicated infrastructure to pay for. They need neither a developer portal nor network isolation. Which tier do you choose?",
+  exp:"Consumption is APIM's serverless tier: pay-per-execution, built-in autoscaling, no dedicated infrastructure, and no developer portal."}},
+
+{n:5, dom:"C", type:"single", ans:"C",
+ es:{text:"Ejecutas un proceso batch nocturno en Azure Container Instances. El contenedor debe reiniciarse solo si el proceso termina con código de error, y detenerse definitivamente si termina exitosamente. ¿Qué valor de <code>--restart-policy</code> configuras?",
+  opts:{A:"Always", B:"Never", C:"OnFailure", D:"UnlessStopped"},
+  exp:"OnFailure reinicia el contenedor únicamente cuando el proceso termina con código de salida distinto de 0. UnlessStopped ni siquiera existe en ACI."},
+ en:{text:"You run a nightly batch process on Azure Container Instances. The container must restart only if the process exits with an error code, and stop permanently if it exits successfully. Which <code>--restart-policy</code> value do you configure?",
+  exp:"OnFailure restarts the container only when the process exits with a non-zero exit code. UnlessStopped does not even exist in ACI."}},
+
+{n:6, dom:"M", type:"single", ans:"B",
+ es:{text:"Debes monitorear la disponibilidad de un endpoint público desde 5 regiones geográficas, validar la vigencia del certificado TLS/SSL, usar el verbo HTTP POST y enviar headers personalizados — todo sin escribir código. ¿Qué creas en Application Insights?",
+  opts:{A:"Un URL ping test", B:"Un Standard test", C:"Una llamada a <code>TrackAvailability()</code> en el código", D:"Una metric alert sobre el contador de requests"},
+  exp:"El Standard test soporta multi-región, validación de certificado TLS, verbos HTTP personalizados y headers, sin código. El URL ping test clásico está retirado."},
+ en:{text:"You must monitor the availability of a public endpoint from 5 geographic regions, validate the TLS/SSL certificate, use the HTTP POST verb, and send custom headers — all without writing code. What do you create in Application Insights?",
+  opts:{A:"A URL ping test", B:"A Standard test", C:"A <code>TrackAvailability()</code> call in code", D:"A metric alert on the request counter"},
+  exp:"The Standard test supports multi-region checks, TLS certificate validation, custom HTTP verbs and headers, with no code. The classic URL ping test is retired."}},
+
+{n:7, dom:"C", type:"single", ans:"B",
+ es:{text:"Tu app corre en Azure Container Apps. Debes desplegar una nueva versión y enviarle solo el 10% del tráfico, manteniendo el 90% en la versión actual. ¿Qué dos configuraciones son necesarias? (La respuesta es UNA opción que describe la combinación correcta.)",
+  opts:{A:"Modo de revisión Single + deployment slots", B:"Modo de revisión Multiple + pesos de tráfico en el ingress", C:"Modo de revisión Single + KEDA scale rules", D:"Dos Container Apps separadas + Azure Front Door"},
+  exp:"En Container Apps, el traffic splitting requiere modo de revisión Multiple y asignar pesos de tráfico entre revisiones en el ingress."},
+ en:{text:"Your app runs on Azure Container Apps. You must deploy a new version and send it only 10% of traffic, keeping 90% on the current version. Which two configurations are required? (The answer is ONE option describing the correct combination.)",
+  opts:{A:"Single revision mode + deployment slots", B:"Multiple revision mode + traffic weights on the ingress", C:"Single revision mode + KEDA scale rules", D:"Two separate Container Apps + Azure Front Door"},
+  exp:"In Container Apps, traffic splitting requires Multiple revision mode and assigning traffic weights across revisions on the ingress."}},
+
+{n:8, dom:"I", type:"single", ans:"B",
+ es:{text:"Usas Azure Service Bus. Los mensajes relacionados con un mismo pedido deben procesarse en orden estricto FIFO, mientras que pedidos distintos pueden procesarse en paralelo. ¿Qué característica implementas?",
+  opts:{A:"Duplicate detection", B:"Message sessions (asignando SessionId por pedido)", C:"Dead-letter queue", D:"Prefetch count"},
+  exp:"Las message sessions garantizan FIFO por SessionId: los mensajes de un mismo pedido van a la misma sesión y sesiones distintas se procesan en paralelo."},
+ en:{text:"You use Azure Service Bus. Messages related to the same order must be processed in strict FIFO order, while different orders can be processed in parallel. Which feature do you implement?",
+  opts:{A:"Duplicate detection", B:"Message sessions (assigning a SessionId per order)", C:"Dead-letter queue", D:"Prefetch count"},
+  exp:"Message sessions guarantee FIFO per SessionId: messages for the same order go to the same session, and different sessions are processed in parallel."}},
+
+{n:9, dom:"S", type:"single", ans:"C",
+ es:{text:"Almacenas archivos de auditoría que se consultan muy rara vez pero deben estar disponibles en milisegundos cuando se soliciten (acceso online). Se conservarán al menos 6 meses. Quieres el menor costo de almacenamiento posible entre los tiers online. ¿Qué tier asignas?",
+  opts:{A:"Hot", B:"Cool", C:"Cold", D:"Archive"},
+  exp:"Cold es el tier online más barato (retención mínima 90 días) con lectura inmediata. Archive es offline: requiere horas de rehidratación."},
+ en:{text:"You store audit files that are read very rarely but must be available within milliseconds when requested (online access). They will be kept for at least 6 months. You want the lowest possible storage cost among the online tiers. Which tier do you assign?",
+  exp:"Cold is the cheapest online tier (90-day minimum retention) with immediate reads. Archive is offline: it requires hours of rehydration."}},
+
+{n:10, dom:"G", type:"single", ans:"B",
+ es:{text:"Tienes 20 instancias de App Service que deben autenticarse contra el mismo Azure Key Vault con una identidad compartida cuyo ciclo de vida sea independiente de cualquier recurso individual. ¿Qué usas?",
+  opts:{A:"System-assigned managed identity en cada app", B:"User-assigned managed identity asignada a las 20 apps", C:"Un service principal con client secret en app settings", D:"Certificado compartido en el código"},
+  exp:"La user-assigned managed identity es un recurso independiente, compartible entre múltiples apps y con ciclo de vida propio. La system-assigned está atada a cada recurso y serían 20 identidades distintas."},
+ en:{text:"You have 20 App Service instances that must authenticate to the same Azure Key Vault using a shared identity whose lifecycle is independent of any individual resource. What do you use?",
+  opts:{A:"A system-assigned managed identity on each app", B:"A user-assigned managed identity assigned to all 20 apps", C:"A service principal with a client secret in app settings", D:"A shared certificate in the code"},
+  exp:"A user-assigned managed identity is a standalone resource, shareable across multiple apps, with its own lifecycle. System-assigned identities are tied to each resource — you would end up with 20 different identities."}},
+
+{n:11, dom:"C", type:"single", ans:"A",
+ es:{text:"Tu Web App usa deployment slots (staging y production). La app setting <code>DB_CONNECTION</code> debe permanecer asociada a cada slot y NO intercambiarse durante el swap. ¿Qué haces?",
+  opts:{A:"Marcar la setting como \"Deployment slot setting\"", B:"Guardarla en web.config", C:"Duplicarla con distinto nombre en cada slot", D:"Usar <code>az webapp deployment slot swap --preserve-vnet</code>"},
+  exp:"Las settings marcadas como \"Deployment slot setting\" (sticky) quedan fijas al slot y no se intercambian en el swap."},
+ en:{text:"Your Web App uses deployment slots (staging and production). The app setting <code>DB_CONNECTION</code> must remain tied to each slot and NOT be swapped during the swap. What do you do?",
+  opts:{A:"Mark the setting as a \"Deployment slot setting\"", B:"Store it in web.config", C:"Duplicate it with a different name in each slot", D:"Use <code>az webapp deployment slot swap --preserve-vnet</code>"},
+  exp:"Settings marked as \"Deployment slot setting\" (sticky) stay pinned to the slot and are not exchanged during a swap."}},
+
+{n:12, dom:"I", type:"single", ans:"B",
+ es:{text:"Creas una suscripción de Azure Event Grid con un webhook HTTP propio como destino. Al crearla, tu endpoint recibe un evento <code>Microsoft.EventGrid.SubscriptionValidationEvent</code>. ¿Qué debe hacer tu endpoint para completar el handshake de validación síncrono?",
+  opts:{A:"Ignorar el evento; Event Grid valida automáticamente", B:"Responder 200 OK incluyendo el <code>validationCode</code> recibido en la propiedad <code>validationResponse</code>", C:"Responder 401 para forzar reintento autenticado", D:"Registrar el endpoint en Microsoft Entra ID"},
+  exp:"El handshake síncrono exige responder 200 con el mismo validationCode dentro de la propiedad validationResponse. (La alternativa asíncrona es visitar el validationUrl manualmente.)"},
+ en:{text:"You create an Azure Event Grid subscription with your own HTTP webhook as the destination. Upon creation, your endpoint receives a <code>Microsoft.EventGrid.SubscriptionValidationEvent</code> event. What must your endpoint do to complete the synchronous validation handshake?",
+  opts:{A:"Ignore the event; Event Grid validates automatically", B:"Respond 200 OK including the received <code>validationCode</code> in the <code>validationResponse</code> property", C:"Respond 401 to force an authenticated retry", D:"Register the endpoint in Microsoft Entra ID"},
+  exp:"The synchronous handshake requires responding 200 with the same validationCode inside the validationResponse property. (The asynchronous alternative is manually visiting the validationUrl.)"}},
+
+{n:13, dom:"S", type:"single", ans:"A",
+ es:{text:"Usas el SDK de .NET de Cosmos DB. Conoces el <code>id</code> del documento y el valor de su partition key. Debes recuperarlo consumiendo la menor cantidad posible de RUs. ¿Qué operación usas?",
+  opts:{A:"<code>container.ReadItemAsync&lt;T&gt;(id, new PartitionKey(pk))</code>", B:"<code>container.GetItemQueryIterator&lt;T&gt;(\"SELECT * FROM c WHERE c.id = @id\")</code>", C:"<code>container.GetItemLinqQueryable&lt;T&gt;().Where(x =&gt; x.Id == id)</code>", D:"<code>container.ReadManyItemsAsync&lt;T&gt;(items)</code>"},
+  exp:"El point read (id + partition key) es la operación más barata: ~1 RU por documento de 1 KB. Cualquier query cuesta más RUs por el motor de consulta."},
+ en:{text:"You use the Cosmos DB .NET SDK. You know the document's <code>id</code> and its partition key value. You must retrieve it consuming the fewest RUs possible. Which operation do you use?",
+  exp:"The point read (id + partition key) is the cheapest operation: ~1 RU for a 1 KB document. Any query costs more RUs due to the query engine."}},
+
+{n:14, dom:"C", type:"single", ans:"B",
+ es:{text:"Una Azure Function con Timer trigger debe ejecutarse todos los días a las 9:30 AM. ¿Qué expresión NCRONTAB configuras?",
+  opts:{A:"<code>30 9 * * *</code>", B:"<code>0 30 9 * * *</code>", C:"<code>0 9 30 * * *</code>", D:"<code>*/30 9 * * * *</code>"},
+  exp:"NCRONTAB usa 6 campos empezando por segundos: {segundo minuto hora día mes día-semana}. La opción A es cron de 5 campos (Linux), no NCRONTAB."},
+ en:{text:"An Azure Function with a Timer trigger must run every day at 9:30 AM. Which NCRONTAB expression do you configure?",
+  exp:"NCRONTAB uses 6 fields starting with seconds: {second minute hour day month day-of-week}. Option A is 5-field Linux cron, not NCRONTAB."}},
+
+{n:15, dom:"G", type:"single", ans:"D",
+ es:{text:"Tu app en App Service tiene habilitada una managed identity y debe leer un secreto de Key Vault sin almacenar ninguna credencial en el código ni en configuración. Completa el código:<pre>var client = new SecretClient(\n    new Uri(\"https://mikv.vault.azure.net\"),\n    new ______());\nKeyVaultSecret secret = await client.GetSecretAsync(\"DbPassword\");</pre>",
+  opts:{A:"<code>AzureKeyCredential</code>", B:"<code>ClientSecretCredential</code>", C:"<code>InteractiveBrowserCredential</code>", D:"<code>DefaultAzureCredential</code>"},
+  exp:"DefaultAzureCredential encadena mecanismos e incluye ManagedIdentityCredential: en App Service usa la managed identity sin ninguna credencial almacenada. ClientSecretCredential requiere un secreto en configuración."},
+ en:{text:"Your App Service app has a managed identity enabled and must read a Key Vault secret without storing any credential in code or configuration. Complete the code:<pre>var client = new SecretClient(\n    new Uri(\"https://mikv.vault.azure.net\"),\n    new ______());\nKeyVaultSecret secret = await client.GetSecretAsync(\"DbPassword\");</pre>",
+  exp:"DefaultAzureCredential chains mechanisms and includes ManagedIdentityCredential: on App Service it uses the managed identity with no stored credential. ClientSecretCredential requires a secret in configuration."}},
+
+{n:16, dom:"I", type:"single", ans:"B",
+ es:{text:"En API Management debes limitar cada suscripción a un máximo de 100 llamadas por cada 60 segundos, devolviendo 429 al exceder. ¿Qué policy aplicas?",
+  opts:{A:"<code>&lt;quota calls=\"100\" renewal-period=\"60\" /&gt;</code>", B:"<code>&lt;rate-limit calls=\"100\" renewal-period=\"60\" /&gt;</code>", C:"<code>&lt;ip-filter action=\"allow\" /&gt;</code>", D:"<code>&lt;cache-lookup /&gt;</code>"},
+  exp:"rate-limit limita ráfagas por período corto renovable y devuelve 429. quota es para límites de volumen a largo plazo y devuelve 403 al excederse."},
+ en:{text:"In API Management you must limit each subscription to a maximum of 100 calls per 60 seconds, returning 429 when exceeded. Which policy do you apply?",
+  exp:"rate-limit throttles bursts over a short renewable period and returns 429. quota is for long-term volume limits and returns 403 when exceeded."}},
+
+{n:17, dom:"C", type:"single", ans:"C",
+ es:{text:"Una Function debe procesar blobs nuevos en un contenedor que recibe millones de blobs por hora. Debes minimizar la latencia de detección y evitar el costo del escaneo por sondeo (polling). ¿Qué trigger configuras?",
+  opts:{A:"Blob trigger clásico (polling del contenedor)", B:"Timer trigger que lista el contenedor cada minuto", C:"Blob trigger con origen Event Grid (<code>Source = BlobTriggerSource.EventGrid</code>)", D:"HTTP trigger invocado manualmente"},
+  exp:"El blob trigger basado en Event Grid reacciona a eventos push en lugar de escanear el contenedor: latencia baja y sin costo de polling, recomendado para alto volumen."},
+ en:{text:"A Function must process new blobs in a container that receives millions of blobs per hour. You must minimize detection latency and avoid the cost of polling scans. Which trigger do you configure?",
+  opts:{A:"Classic blob trigger (container polling)", B:"Timer trigger that lists the container every minute", C:"Blob trigger with Event Grid source (<code>Source = BlobTriggerSource.EventGrid</code>)", D:"HTTP trigger invoked manually"},
+  exp:"The Event Grid-based blob trigger reacts to push events instead of scanning the container: low latency and no polling cost, recommended for high volume."}},
+
+{n:18, dom:"S", type:"single", ans:"A",
+ es:{text:"Debes configurar una política de lifecycle management: mover blobs al tier Cool si no se han modificado en 30 días y eliminarlos a los 365 días de su última modificación. ¿Qué acciones contiene la regla sobre <code>baseBlob</code>?",
+  opts:{A:"<code>\"tierToCool\": { \"daysAfterModificationGreaterThan\": 30 }, \"delete\": { \"daysAfterModificationGreaterThan\": 365 }</code>", B:"<code>\"tierToArchive\": { \"daysAfterCreationGreaterThan\": 30 }, \"delete\": { \"daysAfterCreationGreaterThan\": 365 }</code>", C:"<code>\"enableAutoTierToHotFromCool\": true, \"delete\": { \"daysAfterLastAccessTimeGreaterThan\": 365 }</code>", D:"<code>\"tierToCool\": { \"daysAfterLastTierChangeGreaterThan\": 30 }</code> y un Logic App para el borrado"},
+  exp:"El requisito habla de última modificación: tierToCool y delete con daysAfterModificationGreaterThan (30 y 365)."},
+ en:{text:"You must configure a lifecycle management policy: move blobs to the Cool tier if not modified in 30 days and delete them 365 days after their last modification. Which actions does the <code>baseBlob</code> rule contain?",
+  opts:{A:"<code>\"tierToCool\": { \"daysAfterModificationGreaterThan\": 30 }, \"delete\": { \"daysAfterModificationGreaterThan\": 365 }</code>", B:"<code>\"tierToArchive\": { \"daysAfterCreationGreaterThan\": 30 }, \"delete\": { \"daysAfterCreationGreaterThan\": 365 }</code>", C:"<code>\"enableAutoTierToHotFromCool\": true, \"delete\": { \"daysAfterLastAccessTimeGreaterThan\": 365 }</code>", D:"<code>\"tierToCool\": { \"daysAfterLastTierChangeGreaterThan\": 30 }</code> plus a Logic App for the deletion"},
+  exp:"The requirement is based on last modification: tierToCool and delete with daysAfterModificationGreaterThan (30 and 365)."}},
+
+{n:19, dom:"G", type:"single", ans:"A",
+ es:{text:"Emitiste service SAS tokens a varios clientes con vigencia de 6 meses. Debes poder revocarlos de inmediato ante un incidente SIN regenerar las claves de la cuenta de almacenamiento (eso rompería otros sistemas). ¿Qué debiste hacer al crearlos?",
+  opts:{A:"Asociarlos a una stored access policy en el contenedor, para revocar eliminando la policy", B:"Emitirlos con vigencia de 6 meses y confiar en la expiración", C:"Firmarlos con la clave secundaria", D:"Habilitar soft delete en la cuenta"},
+  exp:"Una service SAS asociada a una stored access policy se revoca eliminando o modificando la policy, sin tocar las claves de la cuenta. Es la única vía de revocación selectiva."},
+ en:{text:"You issued service SAS tokens to several clients with a 6-month validity. You must be able to revoke them immediately during an incident WITHOUT regenerating the storage account keys (that would break other systems). What should you have done when creating them?",
+  opts:{A:"Associate them with a stored access policy on the container, so you can revoke by deleting the policy", B:"Issue them with 6-month validity and rely on expiration", C:"Sign them with the secondary key", D:"Enable soft delete on the account"},
+  exp:"A service SAS tied to a stored access policy is revoked by deleting or modifying the policy, without touching the account keys. It is the only selective revocation mechanism."}},
+
+{n:20, dom:"M", type:"single", ans:"B",
+ es:{text:"Instrumentas una app ASP.NET Core con el SDK de Application Insights. ¿Qué valor configuras para conectar la telemetría a tu recurso, según la práctica vigente de Microsoft?",
+  opts:{A:"El instrumentation key en <code>APPINSIGHTS_INSTRUMENTATIONKEY</code>", B:"La connection string en <code>APPLICATIONINSIGHTS_CONNECTION_STRING</code>", C:"Una API key de lectura del recurso", D:"El resource ID de ARM"},
+  exp:"La connection string es la práctica vigente; la ingesta por instrumentation key sola está deprecada."},
+ en:{text:"You instrument an ASP.NET Core app with the Application Insights SDK. Which value do you configure to connect telemetry to your resource, per current Microsoft practice?",
+  opts:{A:"The instrumentation key in <code>APPINSIGHTS_INSTRUMENTATIONKEY</code>", B:"The connection string in <code>APPLICATIONINSIGHTS_CONNECTION_STRING</code>", C:"A read API key for the resource", D:"The ARM resource ID"},
+  exp:"The connection string is the current practice; instrumentation-key-only ingestion is deprecated."}},
+
+{n:21, dom:"C", type:"order", ans:["B","D","C","A"],
+ es:{text:"[ORDENAR] Debes implementar un despliegue blue-green sin downtime para una Web App en producción usando deployment slots. Ordena los 4 pasos haciendo clic en cada uno según su posición (1º, 2º, 3º, 4º):",
+  opts:{A:"Ejecutar el swap entre staging y production", B:"Crear el deployment slot \"staging\"", C:"Validar y calentar (warm-up) la app en la URL del slot staging", D:"Desplegar la nueva versión al slot staging"},
+  exp:"Orden correcto: B → D → C → A. Primero se crea el slot, se despliega la nueva versión, se valida/calienta en la URL de staging y finalmente se hace el swap."},
+ en:{text:"[ORDER] You must implement a zero-downtime blue-green deployment for a production Web App using deployment slots. Order the 4 steps by clicking each one in sequence (1st, 2nd, 3rd, 4th):",
+  opts:{A:"Perform the swap between staging and production", B:"Create the \"staging\" deployment slot", C:"Validate and warm up the app on the staging slot URL", D:"Deploy the new version to the staging slot"},
+  exp:"Correct order: B → D → C → A. First create the slot, deploy the new version, validate/warm up on the staging URL, and finally perform the swap."}},
+
+{n:22, dom:"I", type:"single", ans:"B",
+ es:{text:"Usas <code>EventProcessorClient</code> para consumir un Event Hub desde múltiples instancias con balanceo de particiones. ¿Dónde persiste los checkpoints y la propiedad de particiones?",
+  opts:{A:"En el propio Event Hub", B:"En un contenedor de Azure Blob Storage", C:"En una tabla de Azure SQL", D:"En Azure Cache for Redis"},
+  exp:"EventProcessorClient requiere un contenedor de Blob Storage para persistir checkpoints y coordinar la propiedad de particiones entre instancias."},
+ en:{text:"You use <code>EventProcessorClient</code> to consume an Event Hub from multiple instances with partition load balancing. Where does it persist checkpoints and partition ownership?",
+  opts:{A:"In the Event Hub itself", B:"In an Azure Blob Storage container", C:"In an Azure SQL table", D:"In Azure Cache for Redis"},
+  exp:"EventProcessorClient requires a Blob Storage container to persist checkpoints and coordinate partition ownership across instances."}},
+
+{n:23, dom:"S", type:"multi", ans:["A","C"],
+ es:{text:"[ELIGE DOS] Implementas el change feed processor de Cosmos DB (SDK .NET). ¿Qué DOS contenedores requiere la arquitectura?",
+  opts:{A:"El contenedor monitoreado (origen del change feed)", B:"Un contenedor dead-letter para eventos fallidos", C:"El lease container (estado y coordinación de los workers)", D:"Un contenedor de snapshots"},
+  exp:"El change feed processor requiere el contenedor monitoreado y el lease container (estado, checkpoints y coordinación entre workers)."},
+ en:{text:"[CHOOSE TWO] You implement the Cosmos DB change feed processor (.NET SDK). Which TWO containers does the architecture require?",
+  opts:{A:"The monitored container (source of the change feed)", B:"A dead-letter container for failed events", C:"The lease container (worker state and coordination)", D:"A snapshots container"},
+  exp:"The change feed processor requires the monitored container and the lease container (state, checkpoints, and coordination across workers)."}},
+
+{n:24, dom:"G", type:"single", series:"daemon", ans:"B",
+ es:{text:"Solución propuesta: registras la app en Entra ID, le otorgas el permiso <strong>delegado</strong> <code>User.Read.All</code> y usas el flujo <strong>authorization code</strong>. ¿Cumple el objetivo?",
+  opts:{A:"Sí", B:"No"},
+  exp:"No. Un daemon no tiene usuario interactivo: los permisos delegados y el flujo authorization code requieren que un usuario inicie sesión."},
+ en:{text:"Proposed solution: you register the app in Entra ID, grant it the <strong>delegated</strong> permission <code>User.Read.All</code>, and use the <strong>authorization code</strong> flow. Does this meet the goal?",
+  opts:{A:"Yes", B:"No"},
+  exp:"No. A daemon has no interactive user: delegated permissions and the authorization code flow require a signed-in user."}},
+
+{n:25, dom:"G", type:"single", series:"daemon", ans:"A",
+ es:{text:"Solución propuesta: registras la app, le otorgas el permiso de <strong>aplicación</strong> <code>User.Read.All</code> con <strong>admin consent</strong>, y usas el flujo <strong>client credentials</strong>. ¿Cumple el objetivo?",
+  opts:{A:"Sí", B:"No"},
+  exp:"Sí. Es el patrón correcto para daemons: permisos de aplicación con admin consent + flujo client credentials, sin usuario."},
+ en:{text:"Proposed solution: you register the app, grant it the <strong>application</strong> permission <code>User.Read.All</code> with <strong>admin consent</strong>, and use the <strong>client credentials</strong> flow. Does this meet the goal?",
+  opts:{A:"Yes", B:"No"},
+  exp:"Yes. This is the correct daemon pattern: application permissions with admin consent + client credentials flow, no user involved."}},
+
+{n:26, dom:"G", type:"single", series:"daemon", ans:"B",
+ es:{text:"Solución propuesta: usas el flujo <strong>device code</strong> con permisos delegados. ¿Cumple el objetivo?",
+  opts:{A:"Sí", B:"No"},
+  exp:"No. Device code es un flujo interactivo (un usuario introduce el código en otro dispositivo) con permisos delegados; no sirve para un daemon desatendido."},
+ en:{text:"Proposed solution: you use the <strong>device code</strong> flow with delegated permissions. Does this meet the goal?",
+  opts:{A:"Yes", B:"No"},
+  exp:"No. Device code is an interactive flow (a user enters the code on another device) with delegated permissions; it does not work for an unattended daemon."}},
+
+{n:27, dom:"C", type:"single", ans:"B",
+ es:{text:"Necesitas hospedar una Function app nueva con estos requisitos: facturación serverless por ejecución, escalado a cero, integración con virtual network para acceder a recursos privados, y opción de instancias always-ready para reducir cold starts. ¿Qué hosting plan eliges?",
+  opts:{A:"Consumption (clásico)", B:"Flex Consumption", C:"Premium", D:"Dedicated (App Service plan)"},
+  exp:"Flex Consumption combina facturación serverless y escalado a cero con VNet integration y always-ready instances. El Consumption clásico no ofrece VNet ni always-ready; Premium no escala a cero."},
+ en:{text:"You need to host a new Function app with these requirements: serverless per-execution billing, scale to zero, virtual network integration to reach private resources, and optional always-ready instances to reduce cold starts. Which hosting plan do you choose?",
+  opts:{A:"Consumption (classic)", B:"Flex Consumption", C:"Premium", D:"Dedicated (App Service plan)"},
+  exp:"Flex Consumption combines serverless billing and scale-to-zero with VNet integration and always-ready instances. Classic Consumption offers neither VNet nor always-ready; Premium does not scale to zero."}},
+
+{n:28, dom:"I", type:"single", ans:"B",
+ es:{text:"En un topic de Service Bus, una suscripción debe recibir únicamente los mensajes cuya propiedad <code>Region</code> sea <code>'LATAM'</code> <strong>y</strong> cuya propiedad <code>Priority</code> sea mayor que 3. ¿Qué tipo de filtro configuras?",
+  opts:{A:"Correlation filter", B:"SQL filter", C:"Boolean filter (TrueFilter)", D:"Un filtro no es posible; debes filtrar en el consumidor"},
+  exp:"El SQL filter soporta condiciones compuestas y operadores de comparación (Region = 'LATAM' AND Priority > 3). El correlation filter solo hace igualdad exacta."},
+ en:{text:"On a Service Bus topic, a subscription must receive only messages whose <code>Region</code> property is <code>'LATAM'</code> <strong>and</strong> whose <code>Priority</code> property is greater than 3. Which filter type do you configure?",
+  opts:{A:"Correlation filter", B:"SQL filter", C:"Boolean filter (TrueFilter)", D:"Filtering is not possible; you must filter in the consumer"},
+  exp:"The SQL filter supports compound conditions and comparison operators (Region = 'LATAM' AND Priority > 3). The correlation filter only does exact equality."}},
+
+{n:29, dom:"S", type:"single", ans:"C",
+ es:{text:"Un blob de 8 GB está en tier Archive. Legal lo necesita disponible en menos de 1 hora. ¿Qué haces?",
+  opts:{A:"Descargarlo directamente; Archive permite lecturas lentas", B:"Rehidratarlo con <code>Set Blob Tier</code> a un tier online con rehydrate priority = Standard", C:"Rehidratarlo a un tier online con rehydrate priority = High", D:"Crear una lifecycle policy que lo mueva a Hot"},
+  exp:"La rehidratación con prioridad High completa blobs de menos de 10 GB típicamente en menos de 1 hora. Standard puede tardar hasta 15 horas. Archive no permite lectura directa."},
+ en:{text:"An 8 GB blob is in the Archive tier. Legal needs it available in under 1 hour. What do you do?",
+  opts:{A:"Download it directly; Archive allows slow reads", B:"Rehydrate it with <code>Set Blob Tier</code> to an online tier with rehydrate priority = Standard", C:"Rehydrate it to an online tier with rehydrate priority = High", D:"Create a lifecycle policy that moves it to Hot"},
+  exp:"High-priority rehydration typically completes blobs under 10 GB in less than 1 hour. Standard can take up to 15 hours. Archive does not allow direct reads."}},
+
+{n:30, dom:"C", type:"single", ans:"A",
+ es:{text:"Debes forzar que una Web App solo acepte tráfico HTTPS y con TLS mínimo 1.2. ¿Qué comandos ejecutas?",
+  opts:{A:"<code>az webapp update --https-only true</code> y <code>az webapp config set --min-tls-version 1.2</code>", B:"<code>az webapp config ssl bind</code> y <code>az webapp restart</code>", C:"<code>az webapp config set --ftps-state Disabled</code> únicamente", D:"<code>az webapp auth update --enabled true</code>"},
+  exp:"--https-only redirige todo HTTP a HTTPS y --min-tls-version fija la versión mínima de TLS. ssl bind solo asocia un certificado."},
+ en:{text:"You must force a Web App to accept only HTTPS traffic with a minimum TLS of 1.2. Which commands do you run?",
+  opts:{A:"<code>az webapp update --https-only true</code> and <code>az webapp config set --min-tls-version 1.2</code>", B:"<code>az webapp config ssl bind</code> and <code>az webapp restart</code>", C:"<code>az webapp config set --ftps-state Disabled</code> only", D:"<code>az webapp auth update --enabled true</code>"},
+  exp:"--https-only redirects all HTTP to HTTPS and --min-tls-version sets the minimum TLS version. ssl bind only attaches a certificate."}},
+
+{n:31, dom:"I", type:"single", ans:"A",
+ es:{text:"En API Management debes rechazar toda petición que no incluya un JWT válido emitido por Microsoft Entra ID, antes de que llegue al backend. ¿Qué policy usas y en qué sección?",
+  opts:{A:"<code>validate-jwt</code> en la sección <code>inbound</code>", B:"<code>validate-jwt</code> en la sección <code>outbound</code>", C:"<code>check-header</code> en la sección <code>backend</code>", D:"<code>authentication-basic</code> en la sección <code>on-error</code>"},
+  exp:"validate-jwt en inbound valida el token antes de reenviar la petición al backend y rechaza con 401 si falla."},
+ en:{text:"In API Management you must reject every request that does not include a valid JWT issued by Microsoft Entra ID, before it reaches the backend. Which policy do you use and in which section?",
+  opts:{A:"<code>validate-jwt</code> in the <code>inbound</code> section", B:"<code>validate-jwt</code> in the <code>outbound</code> section", C:"<code>check-header</code> in the <code>backend</code> section", D:"<code>authentication-basic</code> in the <code>on-error</code> section"},
+  exp:"validate-jwt in inbound validates the token before forwarding the request to the backend and rejects with 401 on failure."}},
+
+{n:32, dom:"M", type:"single", ans:"A",
+ es:{text:"Desde el código de tu app debes registrar un evento de negocio personalizado (\"CompraCompletada\") en Application Insights, con propiedades personalizadas. ¿Qué método usas?",
+  opts:{A:"<code>TelemetryClient.TrackEvent()</code>", B:"<code>TelemetryClient.TrackException()</code>", C:"<code>Console.WriteLine()</code>", D:"<code>TelemetryClient.TrackDependency()</code>"},
+  exp:"TrackEvent registra eventos de negocio personalizados con propiedades y métricas asociadas; se consultan en la tabla customEvents."},
+ en:{text:"From your app's code you must log a custom business event (\"PurchaseCompleted\") to Application Insights, with custom properties. Which method do you use?",
+  exp:"TrackEvent logs custom business events with associated properties and metrics; they are queried in the customEvents table."}},
+
+{n:33, dom:"S", type:"single", ans:"B",
+ es:{text:"Diseñas un contenedor de Cosmos DB para telemetría IoT: 50,000 dispositivos que escriben cada 10 segundos. Debes maximizar la distribución uniforme de escrituras entre particiones físicas. ¿Qué partition key eliges?",
+  opts:{A:"<code>/fechaEnvio</code> (fecha del día)", B:"<code>/deviceId</code>", C:"<code>/region</code> (existen 4 regiones)", D:"<code>/tipoSensor</code> (existen 6 tipos)"},
+  exp:"/deviceId tiene alta cardinalidad (50,000 valores) y distribuye las escrituras uniformemente. Fecha crea hot partition del día actual; region y tipoSensor tienen cardinalidad demasiado baja."},
+ en:{text:"You design a Cosmos DB container for IoT telemetry: 50,000 devices writing every 10 seconds. You must maximize uniform write distribution across physical partitions. Which partition key do you choose?",
+  opts:{A:"<code>/sendDate</code> (current date)", B:"<code>/deviceId</code>", C:"<code>/region</code> (4 regions exist)", D:"<code>/sensorType</code> (6 types exist)"},
+  exp:"/deviceId has high cardinality (50,000 values) and spreads writes evenly. Date creates a hot partition for the current day; region and sensorType have far too low cardinality."}},
+
+{n:34, dom:"C", type:"single", ans:"B",
+ es:{text:"Tu Web App en plan Standard sufre picos de carga impredecibles. Debes aumentar automáticamente el número de instancias cuando el CPU promedio supere 70% durante 10 minutos, y reducirlas cuando baje. ¿Qué configuras?",
+  opts:{A:"Scale up manual al tier Premium", B:"Custom autoscale con reglas de scale-out y scale-in basadas en la métrica CPU Percentage", C:"Un deployment slot adicional", D:"Un WebJob que monitoree el CPU"},
+  exp:"Custom autoscale (Azure Monitor autoscale) con regla de scale-out (CPU > 70% por 10 min) y su regla simétrica de scale-in. Scale up cambia el tamaño, no el número de instancias."},
+ en:{text:"Your Web App on a Standard plan suffers unpredictable load spikes. You must automatically increase the instance count when average CPU exceeds 70% for 10 minutes, and decrease it when it drops. What do you configure?",
+  opts:{A:"Manual scale up to the Premium tier", B:"Custom autoscale with scale-out and scale-in rules based on the CPU Percentage metric", C:"An additional deployment slot", D:"A WebJob that monitors CPU"},
+  exp:"Custom autoscale (Azure Monitor autoscale) with a scale-out rule (CPU > 70% for 10 min) and its symmetric scale-in rule. Scale up changes instance size, not instance count."}},
+
+{n:35, dom:"I", type:"single", ans:"B",
+ es:{text:"Requisitos de mensajería: cola que puede superar los 80 GB de mensajes acumulados, semántica simple de encolar/desencolar, y seguimiento del progreso de procesamiento de cada mensaje vía visibility timeout. Debes minimizar costos. ¿Qué servicio eliges?",
+  opts:{A:"Azure Service Bus (Standard)", B:"Azure Queue Storage", C:"Azure Event Hubs", D:"Azure Event Grid"},
+  exp:"Queue Storage: colas de hasta el límite de la cuenta de storage (muy por encima de 80 GB), semántica simple con visibility timeout y menor costo. Service Bus tiene límite de 80 GB por entidad."},
+ en:{text:"Messaging requirements: a queue that can exceed 80 GB of accumulated messages, simple enqueue/dequeue semantics, and per-message processing progress tracking via visibility timeout. You must minimize cost. Which service do you choose?",
+  exp:"Queue Storage: queues up to the storage account limit (far beyond 80 GB), simple semantics with visibility timeout, and lowest cost. Service Bus has an 80 GB per-entity limit."}},
+
+{n:36, dom:"G", type:"single", ans:"B",
+ es:{text:"Auditoría exige que ningún administrador pueda eliminar de forma permanente e inmediata los secretos de un Key Vault, ni siquiera después de borrarlos (deben poder recuperarse durante el período de retención completo). ¿Qué habilitas?",
+  opts:{A:"Solo soft delete (ya viene habilitado por defecto)", B:"Purge protection", C:"Un lock de solo lectura en el resource group", D:"Backup diario de secretos"},
+  exp:"Con solo soft delete, un administrador aún puede purgar (borrado permanente inmediato). Purge protection bloquea el purge durante todo el período de retención."},
+ en:{text:"Audit requires that no administrator can permanently and immediately delete the secrets of a Key Vault, even after deleting them (they must remain recoverable during the full retention period). What do you enable?",
+  opts:{A:"Soft delete only (already enabled by default)", B:"Purge protection", C:"A read-only lock on the resource group", D:"Daily backup of secrets"},
+  exp:"With soft delete alone, an administrator can still purge (immediate permanent deletion). Purge protection blocks purging for the entire retention period."}},
+
+{n:37, dom:"C", type:"multi", ans:["A","C"],
+ es:{text:"[ELIGE DOS] Una Azure Function (C# isolated) debe activarse cuando llega un mensaje a una cola de Queue Storage y escribir un documento en Cosmos DB, con el mínimo código posible. ¿Qué DOS bindings configuras?",
+  opts:{A:"<code>QueueTrigger</code> como trigger de entrada", B:"<code>EventGridTrigger</code> como trigger de entrada", C:"<code>CosmosDBOutput</code> como binding de salida", D:"<code>BlobInput</code> como binding de entrada"},
+  exp:"QueueTrigger activa la función al llegar el mensaje y CosmosDBOutput escribe el documento sin código de cliente explícito."},
+ en:{text:"[CHOOSE TWO] An Azure Function (C# isolated) must be triggered when a message arrives on a Queue Storage queue and write a document to Cosmos DB, with the least code possible. Which TWO bindings do you configure?",
+  opts:{A:"<code>QueueTrigger</code> as the input trigger", B:"<code>EventGridTrigger</code> as the input trigger", C:"<code>CosmosDBOutput</code> as the output binding", D:"<code>BlobInput</code> as an input binding"},
+  exp:"QueueTrigger fires the function when the message arrives and CosmosDBOutput writes the document without explicit client code."}},
+
+{n:38, dom:"I", type:"single", ans:"A",
+ es:{text:"Un handler suscrito a los eventos de una cuenta de almacenamiento vía Event Grid solo debe recibir eventos de blobs creados bajo la ruta virtual <code>/contenedor-facturas/2026/</code>. ¿Cómo lo logras sin filtrar en el código del handler?",
+  opts:{A:"Configurando <code>subjectBeginsWith</code> en el filtro de la suscripción de eventos", B:"Creando un consumer group dedicado", C:"Configurando un SQL filter en la suscripción", D:"No es posible; Event Grid entrega todos los eventos del origen"},
+  exp:"Event Grid filtra por subject: subjectBeginsWith = /blobServices/default/containers/contenedor-facturas/blobs/2026/. Los SQL filters son de Service Bus, no de Event Grid."},
+ en:{text:"A handler subscribed to a storage account's events via Event Grid must receive only events for blobs created under the virtual path <code>/contenedor-facturas/2026/</code>. How do you achieve this without filtering in the handler's code?",
+  opts:{A:"By configuring <code>subjectBeginsWith</code> on the event subscription filter", B:"By creating a dedicated consumer group", C:"By configuring a SQL filter on the subscription", D:"It is not possible; Event Grid delivers all events from the source"},
+  exp:"Event Grid filters by subject: subjectBeginsWith = /blobServices/default/containers/contenedor-facturas/blobs/2026/. SQL filters belong to Service Bus, not Event Grid."}},
+
+{n:39, dom:"S", type:"single", ans:"A",
+ es:{text:"Dos instancias de tu API leen y actualizan el mismo documento de Cosmos DB concurrentemente. Debes garantizar que una actualización falle si otra instancia modificó el documento después de que lo leíste (concurrencia optimista). ¿Qué implementas?",
+  opts:{A:"Leer el <code>_etag</code> del documento y enviarlo en <code>ItemRequestOptions.IfMatchEtag</code> al actualizar", B:"Nivel de consistencia Strong", C:"Un lock pesimista con un documento de bloqueo", D:"TTL en el contenedor"},
+  exp:"Concurrencia optimista en Cosmos DB: enviar el _etag leído en IfMatchEtag; si el documento cambió, la operación falla con 412 Precondition Failed."},
+ en:{text:"Two instances of your API read and update the same Cosmos DB document concurrently. You must guarantee that an update fails if another instance modified the document after you read it (optimistic concurrency). What do you implement?",
+  opts:{A:"Read the document's <code>_etag</code> and send it in <code>ItemRequestOptions.IfMatchEtag</code> when updating", B:"Strong consistency level", C:"A pessimistic lock using a lock document", D:"TTL on the container"},
+  exp:"Optimistic concurrency in Cosmos DB: send the read _etag in IfMatchEtag; if the document changed, the operation fails with 412 Precondition Failed."}},
+
+{n:40, dom:"C", type:"single", ans:"C",
+ es:{text:"Tu empresa exige que las imágenes de contenedor estén replicadas automáticamente en 3 regiones de Azure con un único registro y un único endpoint lógico. ¿Qué SKU de Azure Container Registry necesitas?",
+  opts:{A:"Basic", B:"Standard", C:"Premium", D:"Cualquiera; la geo-replicación es una feature de red"},
+  exp:"La geo-replicación es exclusiva del SKU Premium de ACR: un registro lógico replicado en múltiples regiones."},
+ en:{text:"Your company requires container images to be automatically replicated across 3 Azure regions with a single registry and a single logical endpoint. Which Azure Container Registry SKU do you need?",
+  opts:{A:"Basic", B:"Standard", C:"Premium", D:"Any; geo-replication is a networking feature"},
+  exp:"Geo-replication is exclusive to the ACR Premium SKU: one logical registry replicated across multiple regions."}},
+
+{n:41, dom:"G", type:"single", ans:"B",
+ es:{text:"Tu app lee configuración desde Azure App Configuration, incluida una clave que es una <strong>Key Vault reference</strong>. La identidad de la app tiene el rol \"App Configuration Data Reader\", pero al resolver esa clave recibe 403 Forbidden. ¿Cuál es la causa?",
+  opts:{A:"Las Key Vault references requieren el tier Premium de App Configuration", B:"La identidad de la app también necesita permisos de lectura de secretos en el Key Vault; App Configuration no resuelve el secreto por ella", C:"Falta habilitar CORS en App Configuration", D:"Las Key Vault references solo funcionan con connection strings, no con managed identity"},
+  exp:"App Configuration solo almacena la referencia; es la app quien va al Key Vault a resolver el secreto, y su identidad necesita acceso de lectura de secretos (p. ej. rol Key Vault Secrets User)."},
+ en:{text:"Your app reads configuration from Azure App Configuration, including a key that is a <strong>Key Vault reference</strong>. The app's identity has the \"App Configuration Data Reader\" role, but resolving that key returns 403 Forbidden. What is the cause?",
+  opts:{A:"Key Vault references require the App Configuration Premium tier", B:"The app's identity also needs secret read permissions on the Key Vault; App Configuration does not resolve the secret on its behalf", C:"CORS is not enabled on App Configuration", D:"Key Vault references only work with connection strings, not managed identity"},
+  exp:"App Configuration only stores the reference; the app itself goes to Key Vault to resolve the secret, and its identity needs secret read access (e.g., the Key Vault Secrets User role)."}},
+
+{n:42, dom:"M", type:"single", ans:"A",
+ es:{text:"Debes listar en Application Insights todas las peticiones HTTP fallidas de la última hora usando KQL. ¿Qué consulta usas?",
+  opts:{A:"<code>requests | where timestamp &gt; ago(1h) | where success == false</code>", B:"<code>traces | where severityLevel &gt; 2 | take 100</code>", C:"<code>exceptions | where timestamp &gt; ago(1h)</code>", D:"<code>availabilityResults | where success == false</code>"},
+  exp:"Las peticiones HTTP entrantes viven en la tabla requests; se filtran por timestamp > ago(1h) y success == false."},
+ en:{text:"You must list all failed HTTP requests from the last hour in Application Insights using KQL. Which query do you use?",
+  exp:"Incoming HTTP requests live in the requests table; filter by timestamp > ago(1h) and success == false."}},
+
+{n:43, dom:"C", type:"single", ans:"C",
+ es:{text:"Tu Container App procesa mensajes de una cola de Service Bus. Debe escalar de 0 réplicas (sin costo en reposo) hasta N réplicas según la longitud de la cola. ¿Qué configuras?",
+  opts:{A:"Una regla de escalado HTTP", B:"Una regla de escalado por CPU", C:"Una custom scale rule basada en el scaler KEDA <code>azure-servicebus</code>", D:"Un cron job que ajuste las réplicas"},
+  exp:"Container Apps usa KEDA: el scaler azure-servicebus escala 0→N según la longitud de la cola. Las reglas por CPU/memoria no permiten escalar a cero."},
+ en:{text:"Your Container App processes messages from a Service Bus queue. It must scale from 0 replicas (no cost at rest) up to N replicas based on queue length. What do you configure?",
+  opts:{A:"An HTTP scale rule", B:"A CPU-based scale rule", C:"A custom scale rule based on the KEDA <code>azure-servicebus</code> scaler", D:"A cron job that adjusts replicas"},
+  exp:"Container Apps uses KEDA: the azure-servicebus scaler scales 0→N based on queue length. CPU/memory rules cannot scale to zero."}},
+
+{n:44, dom:"I", type:"single", ans:"D",
+ es:{text:"Habilitas Event Hubs Capture para archivar automáticamente los eventos en Azure Blob Storage. ¿En qué formato se escriben los archivos capturados?",
+  opts:{A:"JSON", B:"CSV", C:"Parquet", D:"Avro"},
+  exp:"Event Hubs Capture escribe los eventos en formato Apache Avro."},
+ en:{text:"You enable Event Hubs Capture to automatically archive events to Azure Blob Storage. In what format are the captured files written?",
+  exp:"Event Hubs Capture writes events in Apache Avro format."}},
+
+{n:45, dom:"S", type:"single", ans:"B",
+ es:{text:"Debes asociar a un blob pares clave-valor personalizados definidos por tu aplicación (ej. <code>departamento=finanzas</code>), recuperables al leer el blob. ¿Qué método del SDK .NET usas?",
+  opts:{A:"<code>BlobClient.SetHttpHeadersAsync()</code>", B:"<code>BlobClient.SetMetadataAsync()</code>", C:"<code>BlobClient.SetAccessTierAsync()</code>", D:"<code>BlobClient.CreateSnapshotAsync()</code>"},
+  exp:"SetMetadataAsync asigna metadatos clave-valor definidos por el usuario. SetHttpHeadersAsync configura headers de sistema (Content-Type, etc.)."},
+ en:{text:"You must attach application-defined key-value pairs to a blob (e.g., <code>department=finance</code>), retrievable when reading the blob. Which .NET SDK method do you use?",
+  exp:"SetMetadataAsync sets user-defined key-value metadata. SetHttpHeadersAsync configures system headers (Content-Type, etc.)."}},
+
+{n:46, dom:"G", type:"single", ans:"A",
+ es:{text:"Una SPA debe mostrar el nombre y el puesto del usuario que inició sesión, solicitando el mínimo privilegio posible. ¿Qué petición a Microsoft Graph y qué permiso usas?",
+  opts:{A:"<code>GET /v1.0/me?$select=displayName,jobTitle</code> con permiso delegado <code>User.Read</code>", B:"<code>GET /v1.0/users</code> con permiso de aplicación <code>User.Read.All</code>", C:"<code>GET /v1.0/me</code> con permiso de aplicación <code>Directory.ReadWrite.All</code>", D:"<code>GET /v1.0/users/{id}</code> con permiso delegado <code>User.ReadWrite</code>"},
+  exp:"/me con $select y el permiso delegado User.Read es el mínimo privilegio para leer el perfil propio del usuario firmado."},
+ en:{text:"A SPA must display the signed-in user's name and job title, requesting the least privilege possible. Which Microsoft Graph request and permission do you use?",
+  opts:{A:"<code>GET /v1.0/me?$select=displayName,jobTitle</code> with delegated permission <code>User.Read</code>", B:"<code>GET /v1.0/users</code> with application permission <code>User.Read.All</code>", C:"<code>GET /v1.0/me</code> with application permission <code>Directory.ReadWrite.All</code>", D:"<code>GET /v1.0/users/{id}</code> with delegated permission <code>User.ReadWrite</code>"},
+  exp:"/me with $select and the delegated User.Read permission is the least privilege needed to read the signed-in user's own profile."}},
+
+{n:47, dom:"C", type:"single", ans:"A",
+ es:{text:"Necesitas ver en tiempo real la salida de consola de tu Web App Linux mientras reproduces un error. ¿Qué haces?",
+  opts:{A:"Habilitar App Service logs (filesystem) y ejecutar <code>az webapp log tail</code>", B:"Ejecutar <code>az webapp log download</code> cada 30 segundos", C:"Crear un availability test", D:"Consultar la tabla <code>traces</code> al día siguiente"},
+  exp:"az webapp log tail hace streaming en vivo de los logs; requiere habilitar App Service logs a filesystem."},
+ en:{text:"You need to watch the console output of your Linux Web App in real time while reproducing an error. What do you do?",
+  opts:{A:"Enable App Service logs (filesystem) and run <code>az webapp log tail</code>", B:"Run <code>az webapp log download</code> every 30 seconds", C:"Create an availability test", D:"Query the <code>traces</code> table the next day"},
+  exp:"az webapp log tail streams logs live; it requires enabling App Service logs to the filesystem."}},
+
+{n:48, dom:"I", type:"single", ans:"C",
+ es:{text:"Un cliente llama a una API publicada en API Management y recibe <code>401 Access Denied due to missing subscription key</code>. ¿Qué header debe incluir por defecto?",
+  opts:{A:"<code>Authorization</code>", B:"<code>X-API-Key</code>", C:"<code>Ocp-Apim-Subscription-Key</code>", D:"<code>Ocp-Apim-Trace</code>"},
+  exp:"El header por defecto para la subscription key en APIM es Ocp-Apim-Subscription-Key (o el query param subscription-key)."},
+ en:{text:"A client calls an API published in API Management and receives <code>401 Access Denied due to missing subscription key</code>. Which header must it include by default?",
+  exp:"The default header for the subscription key in APIM is Ocp-Apim-Subscription-Key (or the subscription-key query parameter)."}},
+
+{n:49, dom:"M", type:"single", ans:"A",
+ es:{text:"Tu app genera un volumen de telemetría que dispara los costos de Application Insights. Debes reducir el volumen ingerido manteniendo un análisis estadísticamente correcto de la telemetría relacionada. ¿Qué mecanismo usas?",
+  opts:{A:"Sampling (muestreo adaptativo)", B:"Reducir el período de retención del workspace", C:"Un daily cap que corte la ingesta al llegar al límite", D:"Eliminar el SDK y usar solo logs de consola"},
+  exp:"El sampling reduce el volumen preservando ítems relacionados y la corrección estadística. El daily cap corta la ingesta de golpe y pierde datos arbitrariamente."},
+ en:{text:"Your app generates a telemetry volume that is driving up Application Insights costs. You must reduce the ingested volume while keeping statistically correct analysis of related telemetry. Which mechanism do you use?",
+  opts:{A:"Sampling (adaptive)", B:"Reducing the workspace retention period", C:"A daily cap that cuts off ingestion at the limit", D:"Removing the SDK and using console logs only"},
+  exp:"Sampling reduces volume while preserving related items and statistical correctness. A daily cap cuts ingestion abruptly and loses data arbitrarily."}},
+
+{n:50, dom:"C", type:"single", ans:"B",
+ es:{text:"Tu Function app (C#) procesa mensajes de Queue Storage. Debes cambiar el número máximo de mensajes que el runtime recupera y procesa en paralelo por instancia (<code>batchSize</code>) para TODA la app. ¿Dónde lo configuras?",
+  opts:{A:"En <code>local.settings.json</code>", B:"En la sección <code>extensions.queues</code> de <code>host.json</code>", C:"Como atributo en cada función", D:"En una app setting llamada <code>BATCH_SIZE</code>"},
+  exp:"batchSize se configura en host.json → extensions → queues y aplica a todas las funciones de la app. local.settings.json es solo para desarrollo local."},
+ en:{text:"Your Function app (C#) processes Queue Storage messages. You must change the maximum number of messages the runtime retrieves and processes in parallel per instance (<code>batchSize</code>) for the WHOLE app. Where do you configure it?",
+  opts:{A:"In <code>local.settings.json</code>", B:"In the <code>extensions.queues</code> section of <code>host.json</code>", C:"As an attribute on each function", D:"In an app setting named <code>BATCH_SIZE</code>"},
+  exp:"batchSize is configured in host.json → extensions → queues and applies to all functions in the app. local.settings.json is for local development only."}}
+];
+
+/* ================= MOCK EXAM 2 (verificado contra Microsoft Learn; ítems 4, 11, 16, 39, 43 y 45 corregidos/actualizados) ================= */
+const EXAM2 = [
+{n:1, dom:"C", type:"single", ans:"B",
+ es:{text:"Tienes múltiples aplicaciones ejecutándose en un único plan de App Service. ¿Verdadero o Falso? Cada aplicación del plan puede tener reglas de escalado diferentes.",
+  opts:{A:"Verdadero", B:"Falso"},
+  exp:"Falso. El plan de App Service es la unidad de escala: si el plan corre 5 instancias, todas las apps corren en las 5, y el autoscale aplica a todas las apps del plan por igual."},
+ en:{text:"You have multiple apps running in a single App Service plan. True or False? Each app in the plan can have different scaling rules.",
+  opts:{A:"True", B:"False"},
+  exp:"False. The App Service plan is the scale unit: if the plan runs 5 instances, every app runs on all 5, and autoscale applies to all apps in the plan equally."}},
+
+{n:2, dom:"C", type:"single", ans:"B",
+ es:{text:"¿Cuál de los siguientes planes está disponible únicamente para Azure Function Apps?",
+  opts:{A:"Basic", B:"Consumption", C:"Standard", D:"Premium"},
+  exp:"El plan Consumption (serverless) es exclusivo de Functions: escala dinámicamente según la carga y factura por ejecución."},
+ en:{text:"Which of the following plans is available only for Azure Function Apps?",
+  exp:"The Consumption (serverless) plan is exclusive to Functions: it scales dynamically with load and bills per execution."}},
+
+{n:3, dom:"C", type:"single", ans:"B",
+ es:{text:"¿Cuál de los siguientes tiers de App Service NO está disponible para App Service en Linux?",
+  opts:{A:"Free", B:"Shared", C:"Basic", D:"Premium"},
+  exp:"App Service en Linux soporta Free, Basic, Standard y Premium; no existe tier Shared para Linux. Tampoco puedes mezclar apps Linux y Windows en el mismo plan."},
+ en:{text:"Which of the following App Service tiers is NOT available for App Service on Linux?",
+  exp:"App Service on Linux supports Free, Basic, Standard, and Premium; there is no Shared tier for Linux. You also cannot mix Linux and Windows apps in the same plan."}},
+
+{n:4, dom:"C", type:"multi", ans:["B","C","D"],
+ es:{text:"[SELECCIÓN MÚLTIPLE] Al realizar un swap de deployment slots en App Service, ¿cuáles de las siguientes configuraciones NO se intercambian?",
+  opts:{A:"Cadenas de conexión a bases de datos", B:"Publishing endpoints", C:"\"Always On\"", D:"Nombres de dominio personalizados (custom domains)"},
+  exp:"Publishing endpoints, Always On y los custom domains son slot-specific: permanecen en su slot. Las connection strings SÍ se intercambian, salvo que se marquen como sticky (deployment slot setting). Verificado en Learn (deploy-staging-slots)."},
+ en:{text:"[MULTIPLE SELECTION] When performing a deployment slot swap in App Service, which of the following settings are NOT swapped?",
+  opts:{A:"Database connection strings", B:"Publishing endpoints", C:"\"Always On\"", D:"Custom domain names"},
+  exp:"Publishing endpoints, Always On, and custom domains are slot-specific: they stay with their slot. Connection strings ARE swapped unless marked sticky (deployment slot setting). Verified on Learn (deploy-staging-slots)."}},
+
+{n:5, dom:"C", type:"multi", ans:["A","C"],
+ es:{text:"[SELECCIÓN MÚLTIPLE] ¿Cuáles de los siguientes planes de Azure Functions agregan automáticamente potencia de cómputo cuando el código se está ejecutando?",
+  opts:{A:"Consumption", B:"App Service Plan (Dedicated)", C:"Premium"},
+  exp:"Consumption y Premium escalan automáticamente según los eventos (scale-out al subir la carga, scale-in al parar). En el plan Dedicated el escalado lo gobiernan las reglas del App Service plan."},
+ en:{text:"[MULTIPLE SELECTION] Which of the following Azure Functions plans automatically add compute power while your code is running?",
+  opts:{A:"Consumption", B:"App Service Plan (Dedicated)", C:"Premium"},
+  exp:"Consumption and Premium scale automatically based on events (out on load, in when idle). On the Dedicated plan, scaling is governed by the App Service plan rules."}},
+
+{n:6, dom:"C", type:"single", ans:"B",
+ es:{text:"¿Verdadero o Falso? Solo las funciones que se ejecutan en el plan Consumption requieren una cuenta de Azure Storage.",
+  opts:{A:"Verdadero", B:"Falso"},
+  exp:"Falso. En cualquier plan, una Function App requiere una cuenta de almacenamiento general (blobs, colas, tablas y files) para su operación interna."},
+ en:{text:"True or False? Only functions running on the Consumption plan require an Azure Storage account.",
+  opts:{A:"True", B:"False"},
+  exp:"False. On any plan, a Function App requires a general-purpose storage account (blobs, queues, tables, and files) for its internal operation."}},
+
+{n:7, dom:"C", type:"multi", ans:["A","B","C"],
+ es:{text:"[SELECCIÓN MÚLTIPLE] Respecto a la propiedad <code>direction</code> de triggers y bindings en <code>function.json</code>, ¿qué afirmaciones son válidas?",
+  opts:{A:"Para los triggers, la dirección siempre es <code>in</code>", B:"Los bindings de entrada y salida usan <code>in</code> y <code>out</code>", C:"Algunos bindings admiten la dirección especial <code>inout</code>", D:"Los triggers pueden configurarse con dirección <code>out</code>"},
+  exp:"Los triggers son siempre direction 'in'; los bindings usan 'in'/'out' y algunos admiten 'inout'. Un trigger nunca puede ser 'out'."},
+ en:{text:"[MULTIPLE SELECTION] Regarding the <code>direction</code> property of triggers and bindings in <code>function.json</code>, which statements are valid?",
+  opts:{A:"For triggers, the direction is always <code>in</code>", B:"Input and output bindings use <code>in</code> and <code>out</code>", C:"Some bindings support the special <code>inout</code> direction", D:"Triggers can be configured with direction <code>out</code>"},
+  exp:"Triggers are always direction 'in'; bindings use 'in'/'out' and some support 'inout'. A trigger can never be 'out'."}},
+
+{n:8, dom:"C", type:"single", ans:"B",
+ es:{text:"El scale controller de Azure Functions monitorea el flujo de eventos para decidir el escalado. ¿Verdadero o Falso? Con un trigger de Queue Storage, escala según la longitud de la cola y la antigüedad del mensaje más NUEVO.",
+  opts:{A:"Verdadero", B:"Falso"},
+  exp:"Falso. Escala según la longitud de la cola y la antigüedad del mensaje MÁS ANTIGUO (oldest), no del más nuevo."},
+ en:{text:"The Azure Functions scale controller monitors the event flow to decide scaling. True or False? With a Queue Storage trigger, it scales based on queue length and the age of the NEWEST message.",
+  opts:{A:"True", B:"False"},
+  exp:"False. It scales based on queue length and the age of the OLDEST message, not the newest."}},
+
+{n:9, dom:"C", type:"single", ans:"D",
+ es:{text:"¿Cuáles de los siguientes son patrones de aplicación válidos que se benefician de Durable Functions?",
+  opts:{A:"Function chaining", B:"Fan-out / Fan-in", C:"Async HTTP APIs", D:"Todas las anteriores"},
+  exp:"Los tres son patrones canónicos de Durable Functions (junto con monitor, human interaction y aggregator)."},
+ en:{text:"Which of the following are valid application patterns that benefit from Durable Functions?",
+  opts:{A:"Function chaining", B:"Fan-out / Fan-in", C:"Async HTTP APIs", D:"All of the above"},
+  exp:"All three are canonical Durable Functions patterns (along with monitor, human interaction, and aggregator)."}},
+
+{n:10, dom:"S", type:"single", ans:"B",
+ es:{text:"¿Qué tipo de blob está diseñado para almacenar texto y datos binarios de hasta aproximadamente 4.7 TiB, compuesto por bloques administrables individualmente?",
+  opts:{A:"Page blobs", B:"Block blobs", C:"Append blobs"},
+  exp:"Block blobs: texto/binario en bloques individuales (~4.75 TiB clásico; versiones recientes del servicio permiten hasta ~190 TiB). Page blobs: acceso aleatorio hasta 8 TiB (discos VHD). Append blobs: optimizados para anexar (logs)."},
+ en:{text:"Which blob type is designed to store text and binary data up to roughly 4.7 TiB, made up of individually manageable blocks?",
+  opts:{A:"Page blobs", B:"Block blobs", C:"Append blobs"},
+  exp:"Block blobs: text/binary in individual blocks (~4.75 TiB classic; recent service versions allow up to ~190 TiB). Page blobs: random access up to 8 TiB (VHD disks). Append blobs: optimized for appends (logs)."}},
+
+{n:11, dom:"S", type:"single", ans:"B",
+ es:{text:"Entre los tiers de acceso online de blob storage (Hot, Cool, Cold), ¿cuál es el tier de acceso por defecto de una cuenta de almacenamiento GPv2 nueva?",
+  opts:{A:"Cool", B:"Hot", C:"Cold"},
+  exp:"El default access tier de una cuenta GPv2 nueva es Hot; puede cambiarse a Cool o Cold al crearla o después. Archive no puede ser el tier por defecto de la cuenta. (Ítem corregido: la versión original mezclaba los nombres de los tiers.)"},
+ en:{text:"Among the online blob storage access tiers (Hot, Cool, Cold), which is the default access tier of a new GPv2 storage account?",
+  opts:{A:"Cool", B:"Hot", C:"Cold"},
+  exp:"The default access tier of a new GPv2 account is Hot; it can be changed to Cool or Cold at or after creation. Archive cannot be the account default tier. (Item corrected: the original version mixed up the tier names.)"}},
+
+{n:12, dom:"S", type:"single", ans:"B",
+ es:{text:"¿Verdadero o Falso? Todos los datos escritos en Azure Storage se cifran automáticamente mediante SSL.",
+  opts:{A:"Verdadero", B:"Falso"},
+  exp:"Falso. El cifrado automático en reposo es Storage Service Encryption (SSE); TLS/SSL cifra los datos en tránsito, no en reposo."},
+ en:{text:"True or False? All data written to Azure Storage is automatically encrypted using SSL.",
+  opts:{A:"True", B:"False"},
+  exp:"False. Automatic encryption at rest is Storage Service Encryption (SSE); TLS/SSL encrypts data in transit, not at rest."}},
+
+{n:13, dom:"S", type:"multi", ans:["C","D"],
+ es:{text:"[SELECCIÓN MÚLTIPLE] ¿Qué opciones de redundancia protegen tus datos ante una interrupción que afecte a toda una región?",
+  opts:{A:"LRS (redundancia local)", B:"ZRS (redundancia de zona)", C:"GRS (redundancia geográfica)", D:"RA-GRS (geográfica con acceso de lectura)"},
+  exp:"GRS y RA-GRS (y sus variantes GZRS/RA-GZRS) replican a una región secundaria. LRS protege a nivel de nodo dentro de un datacenter; ZRS a nivel de zonas dentro de la misma región."},
+ en:{text:"[MULTIPLE SELECTION] Which redundancy options protect your data in the event of an outage affecting an entire region?",
+  opts:{A:"LRS (locally redundant)", B:"ZRS (zone-redundant)", C:"GRS (geo-redundant)", D:"RA-GRS (geo-redundant with read access)"},
+  exp:"GRS and RA-GRS (and the GZRS/RA-GZRS variants) replicate to a secondary region. LRS protects at node level within a datacenter; ZRS at zone level within the same region."}},
+
+{n:14, dom:"S", type:"single", ans:"B",
+ es:{text:"¿En qué nivel de la jerarquía de Azure Cosmos DB viven los stored procedures, UDFs y triggers?",
+  opts:{A:"Base de datos", B:"Contenedor", C:"Elemento (item)"},
+  exp:"Los stored procedures, las UDFs y los triggers se registran y ejecutan a nivel de contenedor."},
+ en:{text:"At which level of the Azure Cosmos DB hierarchy do stored procedures, UDFs, and triggers live?",
+  opts:{A:"Database", B:"Container", C:"Item"},
+  exp:"Stored procedures, UDFs, and triggers are registered and executed at the container level."}},
+
+{n:15, dom:"S", type:"single", ans:"A",
+ es:{text:"El costo de todas las operaciones de base de datos en Azure Cosmos DB se abstrae y normaliza mediante:",
+  opts:{A:"Request Units (RUs)", B:"Unidades de Procesamiento de Base de Datos", C:"Capacidad de lectura/escritura por segundo"},
+  exp:"Todas las operaciones (lecturas, escrituras, queries) se expresan y facturan en Request Units."},
+ en:{text:"The cost of all database operations in Azure Cosmos DB is abstracted and normalized through:",
+  opts:{A:"Request Units (RUs)", B:"Database Processing Units", C:"Read/write capacity per second"},
+  exp:"All operations (reads, writes, queries) are expressed and billed in Request Units."}},
+
+{n:16, dom:"S", type:"multi", ans:["A","B"],
+ es:{text:"[SELECCIÓN MÚLTIPLE] Sobre los niveles de consistencia de Azure Cosmos DB, ¿qué afirmaciones son verdaderas?",
+  opts:{A:"Con Bounded Staleness, se garantiza que el cliente lee escrituras con un retraso acotado (máximo K versiones o intervalo T)", B:"Con Strong, la ventana de obsolescencia es cero y los clientes leen siempre el último valor confirmado", C:"Con Eventual, se garantiza que un cliente nunca leerá un valor más antiguo que otro ya leído"},
+  exp:"A y B son correctas. C es falsa: Eventual es el nivel MÁS débil; un cliente puede leer valores más antiguos que los ya leídos y no hay garantía de orden (eso sí, ofrece la menor latencia). (Ítem corregido: en la versión original la opción C era verdadera según Learn —eventual ofrece la menor latencia y puede leer desordenado—, lo que invalidaba la clave A+B.)"},
+ en:{text:"[MULTIPLE SELECTION] About Azure Cosmos DB consistency levels, which statements are true?",
+  opts:{A:"With Bounded Staleness, clients are guaranteed to read writes within a bounded lag (at most K versions or interval T)", B:"With Strong, the staleness window is zero and clients always read the latest committed value", C:"With Eventual, a client is guaranteed never to read a value older than one it already read"},
+  exp:"A and B are correct. C is false: Eventual is the WEAKEST level; a client may read values older than ones it already read, with no ordering guarantee (it does offer the lowest latency). (Item corrected: in the original version option C was true per Learn — eventual offers lowest latency and may read out of order — which invalidated the A+B key.)"}},
+
+{n:17, dom:"S", type:"single", ans:"B",
+ es:{text:"Las partition keys deben tener muchos valores distintos. Si tus datos no tienen tal propiedad, ¿cómo creas una clave de partición sintética?",
+  opts:{A:"Usando funciones hash criptográficas de un solo sentido", B:"Concatenando múltiples propiedades de un elemento", C:"Asignando un ID incremental aleatorio en el contenedor"},
+  exp:"Una clave sintética se forma concatenando varios valores de propiedades en una sola propiedad artificial (también se usan sufijos aleatorios o precalculados)."},
+ en:{text:"Partition keys should have many distinct values. If your data lacks such a property, how do you create a synthetic partition key?",
+  opts:{A:"Using one-way cryptographic hash functions", B:"Concatenating multiple properties of an item", C:"Assigning a random incremental ID in the container"},
+  exp:"A synthetic key is formed by concatenating several property values into one artificial property (random or precalculated suffixes are also used)."}},
+
+{n:18, dom:"C", type:"single", ans:"B",
+ es:{text:"¿Verdadero o Falso? Se requiere un mínimo de TRES VMs dentro de un availability set para cumplir el SLA de Azure del 99.95%.",
+  opts:{A:"Verdadero", B:"Falso"},
+  exp:"Falso. Bastan DOS o más VMs en el availability set para el SLA del 99.95%. (Nota: las VMs ya no forman parte del blueprint vigente del AZ-204; ítem de repaso general.)"},
+ en:{text:"True or False? A minimum of THREE VMs within an availability set is required to meet Azure's 99.95% SLA.",
+  opts:{A:"True", B:"False"},
+  exp:"False. TWO or more VMs in the availability set suffice for the 99.95% SLA. (Note: VMs are no longer part of the current AZ-204 blueprint; general review item.)"}},
+
+{n:19, dom:"C", type:"single", ans:"B",
+ es:{text:"¿Qué componente de Docker utiliza la API REST para enviar instrucciones a un servidor local o remoto?",
+  opts:{A:"Docker Daemon", B:"Docker Client", C:"Docker Engine"},
+  exp:"El Docker Client (CLI) es la interfaz que envía instrucciones al daemon mediante la API REST."},
+ en:{text:"Which Docker component uses the REST API to send instructions to a local or remote server?",
+  opts:{A:"Docker Daemon", B:"Docker Client", C:"Docker Engine"},
+  exp:"The Docker Client (CLI) is the interface that sends instructions to the daemon through the REST API."}},
+
+{n:20, dom:"C", type:"single", ans:"B",
+ es:{text:"¿Qué acción realiza el comando <code>docker rmi temp-ubuntu:version-1.0</code>?",
+  opts:{A:"Detiene y elimina un contenedor en ejecución", B:"Elimina la imagen especificada (con su tag) del registro local de Docker", C:"Descarga la imagen especificada desde Docker Hub"},
+  exp:"docker rmi elimina una imagen del registro local; requiere el nombre:tag o el ID de la imagen. (docker rm elimina contenedores; docker pull descarga imágenes.)"},
+ en:{text:"What does the command <code>docker rmi temp-ubuntu:version-1.0</code> do?",
+  opts:{A:"Stops and removes a running container", B:"Removes the specified image (with its tag) from the local Docker registry", C:"Downloads the specified image from Docker Hub"},
+  exp:"docker rmi removes an image from the local registry; it requires the name:tag or the image ID. (docker rm removes containers; docker pull downloads images.)"}},
+
+{n:21, dom:"C", type:"single", ans:"B",
+ es:{text:"En Azure Container Instances, el recurso de nivel superior es el container group. Si tu solución requiere un grupo multi-contenedor, ¿qué sistema operativo host debes usar?",
+  opts:{A:"Windows", B:"Linux", C:"macOS"},
+  exp:"Los multi-container groups de ACI solo admiten contenedores Linux. Para Windows, ACI solo admite instancias de un único contenedor."},
+ en:{text:"In Azure Container Instances, the top-level resource is the container group. If your solution requires a multi-container group, which host OS must you use?",
+  opts:{A:"Windows", B:"Linux", C:"macOS"},
+  exp:"ACI multi-container groups only support Linux containers. For Windows, ACI supports single-container instances only."}},
+
+{n:22, dom:"G", type:"single", ans:"C",
+ es:{text:"En Microsoft Entra ID (antes Azure AD), ¿qué roles puede desempeñar una aplicación registrada en tiempo de ejecución?",
+  opts:{A:"Únicamente rol de cliente", B:"Únicamente rol de servidor de recursos", C:"Roles de cliente y de servidor de recursos"},
+  exp:"Una aplicación puede actuar como cliente (solicita tokens) y como servidor de recursos (expone APIs y valida tokens), incluso ambos a la vez."},
+ en:{text:"In Microsoft Entra ID (formerly Azure AD), which roles can a registered application play at runtime?",
+  opts:{A:"Client role only", B:"Resource server role only", C:"Both client and resource server roles"},
+  exp:"An application can act as a client (requests tokens) and as a resource server (exposes APIs and validates tokens), even both at once."}},
+
+{n:23, dom:"G", type:"multi", ans:["A","B"],
+ es:{text:"[SELECCIÓN MÚLTIPLE] ¿Qué objetos se crean al registrar una aplicación en Microsoft Entra ID desde el portal?",
+  opts:{A:"Objeto de aplicación (application object)", B:"Objeto de entidad de servicio (service principal)", C:"Grupo de seguridad de tenant"},
+  exp:"El registro crea el application object (plantilla global) y el service principal (la identidad local en tu tenant)."},
+ en:{text:"[MULTIPLE SELECTION] Which objects are created when you register an application in Microsoft Entra ID from the portal?",
+  opts:{A:"Application object", B:"Service principal object", C:"Tenant security group"},
+  exp:"Registration creates the application object (global template) and the service principal (the local identity in your tenant)."}},
+
+{n:24, dom:"G", type:"multi", ans:["A","B"],
+ es:{text:"[SELECCIÓN MÚLTIPLE] ¿Cuáles son las dos formas de firmar una Shared Access Signature (SAS)?",
+  opts:{A:"Con la clave de la cuenta de almacenamiento (account key)", B:"Con una user delegation key (Microsoft Entra ID)", C:"Con certificados de Azure Key Vault"},
+  exp:"Una SAS se firma con las claves de la cuenta o con una user delegation key obtenida vía Entra ID (esta última solo para Blob Storage)."},
+ en:{text:"[MULTIPLE SELECTION] What are the two ways to sign a Shared Access Signature (SAS)?",
+  opts:{A:"With the storage account key", B:"With a user delegation key (Microsoft Entra ID)", C:"With Azure Key Vault certificates"},
+  exp:"A SAS is signed with the account keys or with a user delegation key obtained via Entra ID (the latter only for Blob Storage)."}},
+
+{n:25, dom:"G", type:"single", ans:"B",
+ es:{text:"MSAL define clientes públicos y confidenciales. ¿Qué describe mejor a una aplicación de cliente público?",
+  opts:{A:"Es confiable para custodiar las credenciales de la aplicación", B:"No puede retener secretos de forma segura en el lado del cliente, por lo que solo accede a APIs web en nombre de un usuario"},
+  exp:"Los clientes públicos (móvil, escritorio, SPA) corren en dispositivos donde el código es accesible al usuario: no pueden guardar secretos y usan flujos delegados."},
+ en:{text:"MSAL defines public and confidential clients. What best describes a public client application?",
+  opts:{A:"It is trusted to safeguard application credentials", B:"It cannot securely hold secrets on the client side, so it only accesses web APIs on behalf of a user"},
+  exp:"Public clients (mobile, desktop, SPA) run on devices where the code is accessible to the user: they cannot hold secrets and use delegated flows."}},
+
+{n:26, dom:"G", type:"single", ans:"B",
+ es:{text:"En MSAL.NET, instancias las apps con <code>PublicClientApplicationBuilder</code> y <code>ConfidentialClientApplicationBuilder</code>. ¿Verdadero o Falso? Todos los modificadores <code>.With</code> sirven para ambos builders.",
+  opts:{A:"Verdadero", B:"Falso"},
+  exp:"Falso. La mayoría son comunes, pero <code>.WithClientSecret</code> y <code>.WithCertificate</code> son exclusivos del builder confidencial."},
+ en:{text:"In MSAL.NET, you instantiate apps with <code>PublicClientApplicationBuilder</code> and <code>ConfidentialClientApplicationBuilder</code>. True or False? All <code>.With</code> modifiers work for both builders.",
+  opts:{A:"True", B:"False"},
+  exp:"False. Most are common, but <code>.WithClientSecret</code> and <code>.WithCertificate</code> are exclusive to the confidential builder."}},
+
+{n:27, dom:"G", type:"single", ans:"B",
+ es:{text:"¿Verdadero o Falso? Azure Key Vault exige que siempre pases credenciales en tu código para acceder a los secretos.",
+  opts:{A:"Verdadero", B:"Falso"},
+  exp:"Falso. Con una managed identity te autenticas contra Key Vault (y cualquier servicio con auth de Entra ID) sin credenciales en el código."},
+ en:{text:"True or False? Azure Key Vault requires you to always pass credentials in your code to access stored secrets.",
+  opts:{A:"True", B:"False"},
+  exp:"False. With a managed identity you authenticate to Key Vault (and any Entra ID-enabled service) without credentials in code."}},
+
+{n:28, dom:"G", type:"single", ans:"B",
+ es:{text:"Características: ciclo de vida independiente, debe eliminarse explícitamente y puede compartirse entre múltiples recursos. ¿De qué tipo de managed identity hablamos?",
+  opts:{A:"System-assigned", B:"User-assigned"},
+  exp:"Son las propiedades de la user-assigned. La system-assigned nace y muere con su recurso y no puede compartirse."},
+ en:{text:"Characteristics: independent lifecycle, must be deleted explicitly, and can be shared across multiple resources. Which type of managed identity is this?",
+  opts:{A:"System-assigned", B:"User-assigned"},
+  exp:"These are the properties of a user-assigned identity. A system-assigned identity is created and destroyed with its resource and cannot be shared."}},
+
+{n:29, dom:"G", type:"single", ans:"B",
+ es:{text:"¿Verdadero o Falso? Si no especificas el parámetro <code>api-version</code> al llamar a la API REST de Key Vault, se usa por defecto la versión más reciente.",
+  opts:{A:"Verdadero", B:"Falso"},
+  exp:"Falso. El parámetro api-version es obligatorio en cada petición; Key Vault no asume ninguna versión por defecto."},
+ en:{text:"True or False? If you don't specify the <code>api-version</code> parameter when calling the Key Vault REST API, the latest version is used by default.",
+  opts:{A:"True", B:"False"},
+  exp:"False. The api-version parameter is mandatory on every request; Key Vault assumes no default version."}},
+
+{n:30, dom:"G", type:"multi", ans:["A","B"],
+ es:{text:"[SELECCIÓN MÚLTIPLE] En Azure App Configuration, ¿cuáles son usos válidos del atributo label en los pares clave-valor?",
+  opts:{A:"Crear múltiples versiones de un par clave-valor", B:"Especificar múltiples entornos para la misma clave", C:"Almacenar de forma segura secretos de producción"},
+  exp:"Los labels diferencian versiones y entornos de una misma clave. Los secretos NO van en App Configuration: van en Key Vault (referenciados vía Key Vault references)."},
+ en:{text:"[MULTIPLE SELECTION] In Azure App Configuration, which are valid uses of the label attribute on key-value pairs?",
+  opts:{A:"Creating multiple versions of a key-value pair", B:"Specifying multiple environments for the same key", C:"Securely storing production secrets"},
+  exp:"Labels differentiate versions and environments of the same key. Secrets do NOT belong in App Configuration: they go in Key Vault (referenced via Key Vault references)."}},
+
+{n:31, dom:"G", type:"single", ans:"B",
+ es:{text:"¿Cuál opción coincide con la definición de una entidad de servicio (service principal) en Azure?",
+  opts:{A:"Un rol integrado para administrar recursos a nivel de suscripción", B:"Una identidad de seguridad que usan aplicaciones, servicios y herramientas de automatización para acceder a recursos específicos de Azure", C:"Una cuenta de usuario de un desarrollador externo"},
+  exp:"Un service principal es la identidad de seguridad de una app/servicio/herramienta, con permisos acotados a los recursos que necesita."},
+ en:{text:"Which option matches the definition of a service principal in Azure?",
+  opts:{A:"A built-in role for managing resources at subscription level", B:"A security identity used by applications, services, and automation tools to access specific Azure resources", C:"A user account belonging to an external developer"},
+  exp:"A service principal is the security identity of an app/service/tool, with permissions scoped to the resources it needs."}},
+
+{n:32, dom:"I", type:"single", ans:"B",
+ es:{text:"Según los módulos de Learn, ¿cuál es la interfaz administrativa principal donde se configuran las policies (p. ej. cuotas) de Azure API Management?",
+  opts:{A:"Azure CLI", B:"Azure Portal (editor de policies)", C:"Developer Portal"},
+  exp:"El editor de policies del Azure portal es la interfaz administrativa principal. El Developer Portal es para consumidores de las APIs. (También existen CLI/ARM/REST, pero el ítem apunta a la práctica estándar de Learn.)"},
+ en:{text:"According to the Learn modules, what is the primary administrative interface for configuring Azure API Management policies (e.g., quotas)?",
+  opts:{A:"Azure CLI", B:"Azure Portal (policy editor)", C:"Developer Portal"},
+  exp:"The Azure portal policy editor is the primary administrative interface. The Developer Portal is for API consumers. (CLI/ARM/REST also exist, but the item targets the standard Learn practice.)"}},
+
+{n:33, dom:"I", type:"single", ans:"A",
+ es:{text:"En API Management, ¿de qué manera se aplican las policies?",
+  opts:{A:"Se ejecutan en orden secuencial según el flujo definido: inbound, backend, outbound y on-error", B:"Solo se aplican si la petición trae cabecera de autenticación", C:"El flujo de ejecución es aleatorio para optimizar rendimiento"},
+  exp:"Las policies se dividen en secciones inbound, backend, outbound y on-error, y sus declaraciones se ejecutan en orden para cada petición y respuesta."},
+ en:{text:"In API Management, how are policies applied?",
+  opts:{A:"They execute sequentially following the defined flow: inbound, backend, outbound, and on-error", B:"They only apply when the client request includes an authentication header", C:"Execution order is random to optimize performance"},
+  exp:"Policies are divided into inbound, backend, outbound, and on-error sections, and their statements execute in order for each request and response."}},
+
+{n:34, dom:"I", type:"single", ans:"B",
+ es:{text:"¿Verdadero o Falso? La policy de control de flujo (<code>choose</code>) debe contener al menos un elemento <code>&lt;otherwise&gt;</code>.",
+  opts:{A:"Verdadero", B:"Falso"},
+  exp:"Falso. Requiere al menos un <code>&lt;when&gt;</code>; el <code>&lt;otherwise&gt;</code> es opcional."},
+ en:{text:"True or False? The control flow policy (<code>choose</code>) must contain at least one <code>&lt;otherwise&gt;</code> element.",
+  opts:{A:"True", B:"False"},
+  exp:"False. It requires at least one <code>&lt;when&gt;</code>; the <code>&lt;otherwise&gt;</code> is optional."}},
+
+{n:35, dom:"I", type:"single", ans:"B",
+ es:{text:"La policy <code>return-response</code> aborta la ejecución del pipeline y devuelve una respuesta. ¿Cuál es su código de estado HTTP por defecto?",
+  opts:{A:"400 Bad Request", B:"200 OK", C:"204 No Content"},
+  exp:"Por defecto devuelve 200 OK sin cuerpo, salvo que se especifiquen status/headers/body personalizados."},
+ en:{text:"The <code>return-response</code> policy aborts pipeline execution and returns a response. What is its default HTTP status code?",
+  opts:{A:"400 Bad Request", B:"200 OK", C:"204 No Content"},
+  exp:"By default it returns 200 OK with no body, unless custom status/headers/body are specified."}},
+
+{n:36, dom:"I", type:"single", ans:"B",
+ es:{text:"En Azure Event Grid, ¿qué representa la menor cantidad de información que describe completamente algo que ocurrió en el sistema?",
+  opts:{A:"Un topic", B:"Un evento", C:"Una suscripción"},
+  exp:"El evento es la unidad mínima: incluye origen (subject), hora e identificador único, más datos específicos del tipo de evento."},
+ en:{text:"In Azure Event Grid, what represents the smallest amount of information that fully describes something that happened in the system?",
+  opts:{A:"A topic", B:"An event", C:"A subscription"},
+  exp:"The event is the minimal unit: it includes source (subject), time, and a unique identifier, plus event-type-specific data."}},
+
+{n:37, dom:"I", type:"multi", ans:["A","B"],
+ es:{text:"[SELECCIÓN MÚLTIPLE] ¿Cuáles corresponden a tipos de autenticación válidos de Azure Event Grid?",
+  opts:{A:"Publicación en custom topics (key o SAS)", B:"Entrega de eventos a webhooks (validation handshake)", C:"Autenticación mediante certificados SSH"},
+  exp:"Event Grid autentica: publicación en custom topics (key/SAS), entrega a webhooks (handshake de validación) y suscripciones a eventos (RBAC). SSH no existe como mecanismo."},
+ en:{text:"[MULTIPLE SELECTION] Which are valid Azure Event Grid authentication types?",
+  opts:{A:"Custom topic publishing (key or SAS)", B:"Webhook event delivery (validation handshake)", C:"Authentication via SSH certificates"},
+  exp:"Event Grid authenticates: custom topic publishing (key/SAS), webhook delivery (validation handshake), and event subscriptions (RBAC). SSH is not a mechanism."}},
+
+{n:38, dom:"I", type:"single", ans:"B",
+ es:{text:"¿Qué modelo de servicio en la nube representa Azure Event Hubs?",
+  opts:{A:"IaaS", B:"PaaS", C:"SaaS"},
+  exp:"Event Hubs es una plataforma de ingesta/streaming de eventos completamente administrada: PaaS con mínima sobrecarga operativa."},
+ en:{text:"Which cloud service model does Azure Event Hubs represent?",
+  opts:{A:"IaaS", B:"PaaS", C:"SaaS"},
+  exp:"Event Hubs is a fully managed event ingestion/streaming platform: PaaS with minimal operational overhead."}},
+
+{n:39, dom:"I", type:"single", ans:"B",
+ es:{text:"En el SDK vigente de .NET (<code>Azure.Messaging.EventHubs</code>), ¿qué clase usas para publicar eventos en un Event Hub?",
+  opts:{A:"<code>EventHubClient</code>", B:"<code>EventHubProducerClient</code>", C:"<code>QueueClient</code>"},
+  exp:"EventHubProducerClient publica eventos; EventProcessorClient consume con checkpoints. EventHubClient pertenece al SDK legacy Microsoft.Azure.EventHubs (solo recibe fixes críticos; Microsoft recomienda migrar). (Ítem actualizado: la versión original usaba el SDK deprecado.)"},
+ en:{text:"In the current .NET SDK (<code>Azure.Messaging.EventHubs</code>), which class do you use to publish events to an Event Hub?",
+  opts:{A:"<code>EventHubClient</code>", B:"<code>EventHubProducerClient</code>", C:"<code>QueueClient</code>"},
+  exp:"EventHubProducerClient publishes events; EventProcessorClient consumes with checkpoints. EventHubClient belongs to the legacy Microsoft.Azure.EventHubs SDK (critical fixes only; Microsoft recommends migrating). (Item updated: the original version used the deprecated SDK.)"}},
+
+{n:40, dom:"I", type:"single", ans:"B",
+ es:{text:"¿Qué característica avanzada de Azure Service Bus garantiza la entrega ordenada FIFO de mensajes?",
+  opts:{A:"Detección de duplicados", B:"Message sessions", C:"Autoforwarding"},
+  exp:"Las message sessions permiten el procesamiento ordenado y exclusivo de secuencias de mensajes relacionados (FIFO por sesión)."},
+ en:{text:"Which advanced Azure Service Bus feature guarantees FIFO ordered message delivery?",
+  opts:{A:"Duplicate detection", B:"Message sessions", C:"Autoforwarding"},
+  exp:"Message sessions enable ordered, exclusive processing of related message sequences (FIFO per session)."}},
+
+{n:41, dom:"I", type:"single", ans:"B",
+ es:{text:"En Service Bus, ¿qué modo de recepción conviene cuando la aplicación tolera perder un mensaje si ocurre un error?",
+  opts:{A:"PeekLock", B:"ReceiveAndDelete"},
+  exp:"ReceiveAndDelete elimina el mensaje al recibirlo: es el modelo más simple y solo apto para cargas tolerantes a pérdida. PeekLock es el modo seguro (at-least-once)."},
+ en:{text:"In Service Bus, which receive mode suits an application that can tolerate losing a message if an error occurs?",
+  opts:{A:"PeekLock", B:"ReceiveAndDelete"},
+  exp:"ReceiveAndDelete removes the message upon receipt: the simplest model, suitable only for loss-tolerant workloads. PeekLock is the safe (at-least-once) mode."}},
+
+{n:42, dom:"I", type:"single", ans:"B",
+ es:{text:"En Azure Queue Storage, ¿cuál es el time-to-live (TTL) por defecto de un mensaje?",
+  opts:{A:"1 día", B:"7 días", C:"14 días"},
+  exp:"El TTL por defecto es 7 días; puede fijarse en cualquier valor positivo o en -1 para que no expire."},
+ en:{text:"In Azure Queue Storage, what is the default time-to-live (TTL) of a message?",
+  opts:{A:"1 day", B:"7 days", C:"14 days"},
+  exp:"The default TTL is 7 days; it can be set to any positive value or -1 to never expire."}},
+
+{n:43, dom:"I", type:"single", ans:"B",
+ es:{text:"Con el SDK vigente de Queue Storage (<code>QueueClient</code>, paquete <code>Azure.Storage.Queues</code>), ¿qué dos llamadas usas para desencolar un mensaje y confirmar su procesamiento exitoso?",
+  opts:{A:"<code>PeekMessage</code> y <code>ClearMessages</code>", B:"<code>ReceiveMessage</code> y <code>DeleteMessage</code>", C:"<code>GetMessage</code> y <code>RemoveMessage</code>"},
+  exp:"ReceiveMessage oculta el mensaje (visibility timeout por defecto: 30 s) y DeleteMessage (MessageId + PopReceipt) lo elimina tras procesarlo; si no lo borras, reaparece para otro worker. (Ítem actualizado: GetMessage era del SDK legacy WindowsAzure.Storage.)"},
+ en:{text:"With the current Queue Storage SDK (<code>QueueClient</code>, <code>Azure.Storage.Queues</code> package), which two calls do you use to dequeue a message and confirm successful processing?",
+  opts:{A:"<code>PeekMessage</code> and <code>ClearMessages</code>", B:"<code>ReceiveMessage</code> and <code>DeleteMessage</code>", C:"<code>GetMessage</code> and <code>RemoveMessage</code>"},
+  exp:"ReceiveMessage hides the message (default visibility timeout: 30 s) and DeleteMessage (MessageId + PopReceipt) removes it after processing; if you don't delete it, it reappears for another worker. (Item updated: GetMessage belonged to the legacy WindowsAzure.Storage SDK.)"}},
+
+{n:44, dom:"M", type:"single", ans:"B",
+ es:{text:"Los SDKs de Application Insights para .NET traen dos canales integrados. ¿Cuál puede almacenar la telemetría en disco local ante pérdida de red?",
+  opts:{A:"InMemoryChannel", B:"ServerTelemetryChannel"},
+  exp:"ServerTelemetryChannel incluye políticas de reintento y respaldo en disco local cuando falla la conectividad. InMemoryChannel pierde lo que tenga en memoria."},
+ en:{text:"The Application Insights SDKs for .NET ship with two built-in channels. Which one can store telemetry on local disk during network loss?",
+  opts:{A:"InMemoryChannel", B:"ServerTelemetryChannel"},
+  exp:"ServerTelemetryChannel includes retry policies and local-disk fallback when connectivity fails. InMemoryChannel loses whatever it holds in memory."}},
+
+{n:45, dom:"M", type:"single", ans:"B",
+ es:{text:"¿Verdadero o Falso? Las pruebas de disponibilidad de Application Insights usan el protocolo ICMP para validar que un sitio web responde.",
+  opts:{A:"Verdadero", B:"Falso"},
+  exp:"Falso. Usan peticiones HTTP completas, no ICMP. (Ítem actualizado: el 'URL ping test' clásico está retirado; hoy se usan Standard tests, que igualmente son HTTP.)"},
+ en:{text:"True or False? Application Insights availability tests use the ICMP protocol to validate that a website responds.",
+  opts:{A:"True", B:"False"},
+  exp:"False. They use full HTTP requests, not ICMP. (Item updated: the classic 'URL ping test' is retired; Standard tests are used today, which are likewise HTTP.)"}},
+
+{n:46, dom:"M", type:"multi", ans:["A","B"],
+ es:{text:"[SELECCIÓN MÚLTIPLE] ¿Cuáles son estrategias válidas para mitigar fallos transitorios en la nube?",
+  opts:{A:"Reintentar después de un retraso (retry after a delay)", B:"Cancelar y reintentar (cancel and retry)", C:"Reintento inmediato continuo sin límite de intentos"},
+  exp:"Reintentos con retraso (idealmente backoff exponencial) y cancelar peticiones colgadas para reintentar son estrategias de resiliencia correctas. Reintentar sin límite ni retraso amplifica el problema (retry storm)."},
+ en:{text:"[MULTIPLE SELECTION] Which are valid strategies to mitigate transient faults in the cloud?",
+  opts:{A:"Retry after a delay", B:"Cancel and retry", C:"Continuous immediate retry with no attempt limit"},
+  exp:"Delayed retries (ideally exponential backoff) and cancelling hung requests before retrying are correct resilience strategies. Unlimited immediate retries amplify the problem (retry storm)."}},
+
+{n:47, dom:"M", type:"multi", ans:["A","B"],
+ es:{text:"[SELECCIÓN MÚLTIPLE] Sobre nodos y clústeres en Azure Cache for Redis, ¿qué afirmaciones son verdaderas?",
+  opts:{A:"Los nodos son los espacios de memoria donde se almacenan los datos de la caché", B:"Los clústeres son conjuntos de tres o más nodos", C:"Un clúster solo puede tener un único nodo primario"},
+  exp:"Un nodo es el espacio de memoria de la caché; un clúster agrupa tres o más nodos repartiendo los datos en shards. C es falsa: cada shard del clúster tiene su propio primario."},
+ en:{text:"[MULTIPLE SELECTION] About nodes and clusters in Azure Cache for Redis, which statements are true?",
+  opts:{A:"Nodes are the memory spaces where cache data is stored", B:"Clusters are sets of three or more nodes", C:"A cluster can only have a single primary node"},
+  exp:"A node is the cache's memory space; a cluster groups three or more nodes, spreading data across shards. C is false: each shard in the cluster has its own primary."}},
+
+{n:48, dom:"M", type:"single", ans:"A",
+ es:{text:"¿Verdadero o Falso? Los recursos de Azure Cache for Redis requieren un nombre globalmente único.",
+  opts:{A:"Verdadero", B:"Falso"},
+  exp:"Verdadero. El nombre genera la URL pública del servicio vía DNS (nombre.redis.cache.windows.net), por lo que debe ser único en todo Azure."},
+ en:{text:"True or False? Azure Cache for Redis resources require a globally unique name.",
+  opts:{A:"True", B:"False"},
+  exp:"True. The name generates the service's public DNS URL (name.redis.cache.windows.net), so it must be unique across all of Azure."}},
+
+{n:49, dom:"M", type:"single", ans:"B",
+ es:{text:"En la programación con Redis (<code>IDatabase</code>, StackExchange.Redis), ¿qué método crea un grupo de operaciones que se envía al servidor y se procesa como una única unidad atómica?",
+  opts:{A:"<code>CreateBatch</code>", B:"<code>CreateTransaction</code>", C:"<code>BeginAtomicGroup</code>"},
+  exp:"CreateTransaction agrupa operaciones que se ejecutan como unidad atómica (MULTI/EXEC). CreateBatch solo evita que otros comandos de la conexión se intercalen, sin atomicidad."},
+ en:{text:"In Redis programming (<code>IDatabase</code>, StackExchange.Redis), which method creates a group of operations sent to the server and processed as a single atomic unit?",
+  opts:{A:"<code>CreateBatch</code>", B:"<code>CreateTransaction</code>", C:"<code>BeginAtomicGroup</code>"},
+  exp:"CreateTransaction groups operations that execute as an atomic unit (MULTI/EXEC). CreateBatch only prevents other commands on the connection from interleaving, without atomicity."}},
+
+{n:50, dom:"S", type:"single", ans:"A",
+ es:{text:"¿Verdadero o Falso? En Azure Cosmos DB puedes habilitar TTL a nivel de contenedor y sobrescribir el valor por elemento individual.",
+  opts:{A:"Verdadero", B:"Falso"},
+  exp:"Verdadero. DefaultTimeToLive se define en el contenedor y cada ítem puede sobrescribirlo con su propiedad ttl (requiere TTL habilitado en el contenedor). Con -1 en el contenedor, los ítems no expiran salvo que definan su propio ttl. (Ítem añadido para completar 50: la tanda original traía 49.)"},
+ en:{text:"True or False? In Azure Cosmos DB you can enable TTL at the container level and override the value per individual item.",
+  opts:{A:"True", B:"False"},
+  exp:"True. DefaultTimeToLive is set on the container and each item can override it with its own ttl property (requires TTL enabled on the container). With -1 on the container, items don't expire unless they define their own ttl. (Item added to reach 50: the original batch had 49.)"}}
+];
+
+/* ================= MOCK EXAM 3 (verificado contra Microsoft Learn; ítems 15, 21, 22 y 23 corregidos; repeticiones marcadas: 11, 16, 18, 20, 31) ================= */
+const EXAM3 = [
+{n:1, dom:"I", type:"single", ans:"A",
+ es:{text:"Creas un workflow con Azure Logic Apps que debe: (1) iniciarse cuando una máquina virtual se desasigna (deallocated) y (2) notificar por email al administrador de TI con los detalles del evento. ¿Con qué servicio integras el workflow para disparar el trigger?",
+  opts:{A:"Azure Event Grid", B:"Azure Service Bus", C:"Azure Monitor (consulta de logs)", D:"Azure Event Hubs"},
+  exp:"Event Grid emite eventos de recursos de Azure (como la desasignación de una VM) y tiene conector nativo con Logic Apps para disparar workflows cuando ocurren acciones específicas."},
+ en:{text:"You create an Azure Logic Apps workflow that must: (1) initiate whenever a virtual machine is deallocated and (2) notify the IT administrator by email with the event details. Which service do you integrate with your workflow to set off the trigger?",
+  opts:{A:"Azure Event Grid", B:"Azure Service Bus", C:"Azure Monitor (log queries)", D:"Azure Event Hubs"},
+  exp:"Event Grid emits Azure resource events (such as a VM deallocation) and has a native Logic Apps connector to trigger workflows when specific actions occur."}},
+
+{n:2, dom:"C", type:"single", ans:"C",
+ es:{text:"Necesitas crear una Azure Container Instance que ejecute un servidor web con la imagen NGINX y luego ver los logs del contenedor en ejecución. ¿Qué pareja de comandos de Azure CLI usas?",
+  opts:{A:"<code>az acr create</code> y <code>az acr logs</code>", B:"<code>az container up</code> y <code>az container show</code>", C:"<code>az container create</code> y <code>az container logs</code>", D:"<code>az webapp create</code> y <code>az webapp log tail</code>"},
+  exp:"az container create crea la instancia de contenedor y az container logs muestra los logs del contenedor en ejecución (con --follow para streaming)."},
+ en:{text:"You need to create an Azure Container Instance running a web server with the NGINX image and then view the logs of the running container. Which pair of Azure CLI commands do you use?",
+  opts:{A:"<code>az acr create</code> and <code>az acr logs</code>", B:"<code>az container up</code> and <code>az container show</code>", C:"<code>az container create</code> and <code>az container logs</code>", D:"<code>az webapp create</code> and <code>az webapp log tail</code>"},
+  exp:"az container create creates the container instance and az container logs shows the running container's logs (with --follow for streaming)."}},
+
+{n:3, dom:"G", type:"single", ans:"A",
+ es:{text:"Tu web app consulta Microsoft Graph. ¿Qué combinación de query parameters devuelve únicamente el displayName de los usuarios con apellido 'Sam'?",
+  opts:{A:"<code>?$filter=surname eq 'Sam'&$select=displayName</code>", B:"<code>?$search=surname:'Sam'&$format=displayName</code>", C:"<code>?$where=surname='Sam'&$fields=displayName</code>", D:"<code>?$filter=surname eq 'Sam'</code>"},
+  exp:"$filter define la condición y $select limita los campos devueltos. La opción D filtra pero devuelve el objeto de usuario completo, no solo displayName."},
+ en:{text:"Your web app queries Microsoft Graph. Which query parameter combination returns only the display name of users with the last name 'Sam'?",
+  exp:"$filter defines the condition and $select limits the returned fields. Option D filters but returns the full user object, not just displayName."}},
+
+{n:4, dom:"I", type:"single", ans:"B",
+ es:{text:"Construyes el módulo que envía mensajes a un Event Hub. Para enviar varios eventos eficientemente en una sola petición necesitas un EventDataBatch. ¿Qué método del producer usas para crearlo?",
+  opts:{A:"<code>SendBatchAsync</code>", B:"<code>CreateBatchAsync</code>", C:"<code>NewEventDataBatch</code>", D:"<code>CreateEventAsync</code>"},
+  exp:"producer.CreateBatchAsync() crea el EventDataBatch; luego TryAdd() agrega eventos respetando el límite de tamaño y SendAsync(batch) lo envía."},
+ en:{text:"You are building the module that sends messages to an Event Hub. To send multiple events efficiently in a single request you need an EventDataBatch. Which producer method do you use to create it?",
+  exp:"producer.CreateBatchAsync() creates the EventDataBatch; then TryAdd() adds events respecting the size limit and SendAsync(batch) sends it."}},
+
+{n:5, dom:"I", type:"single", ans:"B",
+ es:{text:"Tu instancia de API Management debe convertir todo el JSON entrante a XML antes de reenviarlo al backend (que solo acepta XML). Decides implementar un Azure Logic App para la transformación. ¿Cumple el requisito?",
+  opts:{A:"Sí", B:"No"},
+  exp:"No. Logic Apps orquesta workflows, no transforma peticiones request/response en línea. Lo correcto es la policy <code>json-to-xml</code> de APIM en la sección inbound."},
+ en:{text:"Your API Management instance must convert all incoming JSON to XML before forwarding it to the back end (which only accepts XML). You decide to implement an Azure Logic App to handle the transformation. Does this fulfill the requirement?",
+  opts:{A:"Yes", B:"No"},
+  exp:"No. Logic Apps orchestrates workflows; it doesn't transform request/response messages inline. The correct approach is APIM's <code>json-to-xml</code> policy in the inbound section."}},
+
+{n:6, dom:"S", type:"single", ans:"B",
+ es:{text:"Cuenta de almacenamiento GPv2 con soft delete de blobs (7 días) y snapshots habilitados. ¿Es posible modificar un snapshot existente de un blob?",
+  opts:{A:"Sí", B:"No"},
+  exp:"No. Un snapshot es una versión de solo lectura del blob en un instante dado: puede leerse, copiarse o eliminarse, pero nunca modificarse."},
+ en:{text:"A GPv2 storage account with blob soft delete (7 days) and snapshots enabled. Is it possible to modify an existing blob snapshot?",
+  opts:{A:"Yes", B:"No"},
+  exp:"No. A snapshot is a read-only version of a blob at a point in time: it can be read, copied, or deleted, but never modified."}},
+
+{n:7, dom:"I", type:"single", ans:"C",
+ es:{text:"APIM con caching por sesión. Debes añadir policies para: extraer y guardar el session ID del usuario, recuperar respuestas cacheadas por session ID, guardar la respuesta en caché y modificar la respuesta antes de enviarla al cliente. ¿En qué sección aplicas la policy que extrae y guarda el session ID?",
+  opts:{A:"Backend", B:"Outbound", C:"Inbound", D:"On-error"},
+  exp:"El session ID viaja en la petición entrante: set-variable y cache-lookup van en inbound. cache-store y la modificación de la respuesta van en outbound."},
+ en:{text:"APIM with session-based caching. You must add policies to: extract and store the user's session ID, retrieve cached responses by session ID, store the response in the cache, and modify the response before sending it to the client. In which section do you apply the policy that extracts and stores the session ID?",
+  opts:{A:"Backend", B:"Outbound", C:"Inbound", D:"On-error"},
+  exp:"The session ID travels in the incoming request: set-variable and cache-lookup go in inbound. cache-store and response modification go in outbound."}},
+
+{n:8, dom:"S", type:"single", ans:"B",
+ es:{text:"Cosmos DB con estos requisitos: alta disponibilidad y baja latencia, aceptar transacciones durante fallos localizados, procesar los datos en el mismo orden de las escrituras, y tolerar datos desordenados con un máximo de 3 segundos. ¿Qué consistencyLevel configuras?",
+  opts:{A:"Strong", B:"BoundedStaleness", C:"Session", D:"Eventual"},
+  exp:"Bounded Staleness garantiza lecturas con retraso acotado por K versiones o un intervalo T (aquí, 3 segundos), preservando el orden de las escrituras."},
+ en:{text:"Cosmos DB with these requirements: high availability and low latency, accept transactions during localized failures, process data in the same order as writes, and allow out-of-order data with a maximum 3-second tolerance. Which consistencyLevel do you configure?",
+  exp:"Bounded Staleness guarantees reads lag writes by at most K versions or a time interval T (here, 3 seconds), preserving write order."}},
+
+{n:9, dom:"I", type:"single", ans:"C",
+ es:{text:"Suscripción de Event Grid para EndpointB: debe recibir mensajes únicamente cuando se CREAN objetos en Azure Blob Storage (no al modificarlos ni eliminarlos). ¿Qué opción de filtro usas?",
+  opts:{A:"subjectEndsWith", B:"dataVersion", C:"EventTypes (Microsoft.Storage.BlobCreated)", D:"No es posible filtrar por tipo de operación"},
+  exp:"Filtrar por event type BlobCreated entrega solo eventos de creación. subjectBeginsWith/EndsWith filtran por ruta o extensión, no por tipo de operación. (Enunciado precisado respecto al original, que mezclaba contenedor específico con tipo de evento.)"},
+ en:{text:"Event Grid subscription for EndpointB: it must receive messages only when objects are CREATED in Azure Blob Storage (not when modified or deleted). Which filter option do you use?",
+  opts:{A:"subjectEndsWith", B:"dataVersion", C:"EventTypes (Microsoft.Storage.BlobCreated)", D:"Filtering by operation type is not possible"},
+  exp:"Filtering by the BlobCreated event type delivers only creation events. subjectBeginsWith/EndsWith filter by path or extension, not operation type. (Wording tightened vs. the original, which mixed a specific container with event type.)"}},
+
+{n:10, dom:"G", type:"single", ans:"D",
+ es:{text:"ClientApp1 (front-end) debe llamar a APIApp1 en nombre del usuario autenticado; ambas están registradas en Microsoft Entra ID. ¿Qué permiso de API otorgas a ClientApp1?",
+  opts:{A:"<code>Application.Read.All</code> (aplicación)", B:"<code>offline_access</code>", C:"<code>.default</code> con client credentials", D:"<code>user_impersonation</code> (delegado)"},
+  exp:"user_impersonation es el permiso delegado expuesto por APIApp1 que permite a ClientApp1 actuar en nombre del usuario firmado."},
+ en:{text:"ClientApp1 (front end) must call APIApp1 on behalf of the authenticated user; both are registered in Microsoft Entra ID. Which API permission do you grant ClientApp1?",
+  opts:{A:"<code>Application.Read.All</code> (application)", B:"<code>offline_access</code>", C:"<code>.default</code> with client credentials", D:"<code>user_impersonation</code> (delegated)"},
+  exp:"user_impersonation is the delegated permission exposed by APIApp1 that lets ClientApp1 act on behalf of the signed-in user."}},
+
+{n:11, dom:"S", type:"single", ans:"B",
+ es:{text:"La aplicación AppC exige que los usuarios siempre vean la última escritura confirmada. ¿Qué nivel de consistencia seleccionas para su cuenta de Cosmos DB?",
+  opts:{A:"Bounded Staleness", B:"Strong", C:"Session", D:"Consistent Prefix"},
+  exp:"Strong garantiza linealizabilidad: las lecturas siempre devuelven la versión confirmada más reciente. (Repetida: mismo concepto que Mock 2 P16-B; el Simulacro 1 P2 evalúa el caso Session.)"},
+ en:{text:"Application AppC requires users to always see the latest committed write. Which consistency level do you select for its Cosmos DB account?",
+  exp:"Strong guarantees linearizability: reads always return the most recent committed version. (Repeat: same concept as Mock 2 Q16-B; Practice Exam 1 Q2 tests the Session case.)"}},
+
+{n:12, dom:"M", type:"multi", ans:["A","B"],
+ es:{text:"[SELECCIÓN MÚLTIPLE] Tu web app usa Azure Cache for Redis y debes asegurar que las claves obsoletas se eliminen correctamente. ¿Qué dos mecanismos usas?",
+  opts:{A:"Elegir una eviction policy", B:"Establecer un valor de expiración (TTL) en las claves", C:"Aumentar el SKU de la caché", D:"Reiniciar la caché periódicamente"},
+  exp:"La eviction policy elimina datos automáticamente al alcanzar el límite de memoria; el TTL por clave elimina datos específicos tras un período definido."},
+ en:{text:"[MULTIPLE SELECTION] Your web app uses Azure Cache for Redis and you must ensure stale keys are properly removed. Which two mechanisms do you use?",
+  opts:{A:"Choose an eviction policy", B:"Set a key expiration (TTL) value", C:"Increase the cache SKU", D:"Restart the cache periodically"},
+  exp:"The eviction policy automatically removes data when the memory limit is reached; per-key TTL removes specific data after a defined period."}},
+
+{n:13, dom:"M", type:"single", ans:"C",
+ es:{text:"App .NET Core monitoreada con Application Insights. ¿Qué feature te ayuda a entender cómo el tiempo de carga de página impacta las conversiones de usuarios?",
+  opts:{A:"Funnels", B:"Retention", C:"Impact", D:"User Flows"},
+  exp:"Impact analiza cómo propiedades como el tiempo de carga afectan tasas de conversión. Funnels mide progresión por etapas; Retention, el retorno de usuarios; User Flows, la navegación."},
+ en:{text:"A .NET Core app monitored with Application Insights. Which feature helps you understand how page load time impacts user conversions?",
+  opts:{A:"Funnels", B:"Retention", C:"Impact", D:"User Flows"},
+  exp:"Impact analyzes how properties like load time affect conversion rates. Funnels measures stage progression; Retention, returning users; User Flows, navigation."}},
+
+{n:14, dom:"S", type:"single", ans:"B",
+ es:{text:"En un stored procedure (JavaScript) de Cosmos DB, la propiedad DiscountAmount debe fijarse en cero si el documento no la trae. ¿Qué condición usas para comprobar su existencia?",
+  opts:{A:"<code>if (!discountItem.contains(\"DiscountAmount\"))</code>", B:"<code>if (!discountItem.hasOwnProperty(\"DiscountAmount\"))</code>", C:"<code>if (discountItem.DiscountAmount === \"\")</code>", D:"<code>if (!discountItem.exists(\"DiscountAmount\"))</code>"},
+  exp:"En JavaScript, hasOwnProperty() es la forma correcta de comprobar si un objeto tiene una propiedad. contains()/exists() no existen para objetos y comparar con \"\" no detecta ausencia."},
+ en:{text:"In a Cosmos DB stored procedure (JavaScript), the DiscountAmount property must be set to zero if the document doesn't have it. Which condition do you use to check for its existence?",
+  exp:"In JavaScript, hasOwnProperty() is the correct way to check whether an object has a property. contains()/exists() don't exist for objects, and comparing to \"\" doesn't detect absence."}},
+
+{n:15, dom:"G", type:"single", ans:"C",
+ es:{text:"Con Microsoft Graph, ¿qué llamada REST usas para crear o reemplazar (upsert) una actividad de usuario con nuevos detalles?",
+  opts:{A:"<code>PUT /me/activities/recent/{activityId}</code>", B:"<code>POST /me/activities/recent</code>", C:"<code>PUT /me/activities/{appActivityId}</code>", D:"<code>PATCH /me/activities</code>"},
+  exp:"El upsert documentado es PUT /me/activities/{appActivityId}. El endpoint /recent solo admite GET (listar actividades recientes). (Ítem corregido: la clave original, PUT /me/activities/recent/{activityId}, no existe en Graph; verificado en Learn.)"},
+ en:{text:"With Microsoft Graph, which REST call do you use to create or replace (upsert) a user activity with new details?",
+  exp:"The documented upsert is PUT /me/activities/{appActivityId}. The /recent endpoint only supports GET (listing recent activities). (Item corrected: the original key, PUT /me/activities/recent/{activityId}, doesn't exist in Graph; verified on Learn.)"}},
+
+{n:16, dom:"G", type:"single", ans:"D",
+ es:{text:"Tu app usa Azure App Configuration y se despliega en Dev, QA y Production: algunos valores son compartidos y otros difieren por entorno. ¿Qué usas para gestionar los valores específicos de cada entorno?",
+  opts:{A:"Feature flags", B:"Réplicas", C:"Content types", D:"Labels"},
+  exp:"Los labels permiten asignar valores distintos a la misma clave según el entorno (p. ej. key=DbTimeout, label=Dev/QA/Prod). (Repetida: mismo concepto que Mock 2 P30.)"},
+ en:{text:"Your app uses Azure App Configuration and deploys to Dev, QA, and Production: some values are shared and a few differ per environment. What do you use to manage the environment-specific settings?",
+  opts:{A:"Feature flags", B:"Replicas", C:"Content types", D:"Labels"},
+  exp:"Labels let you assign different values to the same key per environment (e.g., key=DbTimeout, label=Dev/QA/Prod). (Repeat: same concept as Mock 2 Q30.)"}},
+
+{n:17, dom:"M", type:"single", ans:"B",
+ es:{text:"Servicio de streaming de video en Azure Web Apps con CDN: todo el contenido debe expirar de la caché del CDN tras una hora. ¿Qué caching behavior seleccionas en la regla de caché?",
+  opts:{A:"Bypass cache", B:"Override", C:"Set if missing", D:"Honor origin"},
+  exp:"Override ignora la duración de caché del origen y aplica la que definas (1 hora). Set if missing solo aplica si el origen no envía headers de caché; Bypass no cachea nada."},
+ en:{text:"A video streaming service on Azure Web Apps with CDN: all content must expire from the CDN cache after one hour. Which caching behavior do you select in the caching rule?",
+  opts:{A:"Bypass cache", B:"Override", C:"Set if missing", D:"Honor origin"},
+  exp:"Override ignores the origin's cache duration and applies the one you define (1 hour). Set if missing only applies when the origin sends no cache headers; Bypass caches nothing."}},
+
+{n:18, dom:"C", type:"single", ans:"A",
+ es:{text:"Una Function lee mensajes de una Azure Storage Queue y agrega entidades a Table Storage. En function.json, ¿qué valor va en <code>direction</code> del queue trigger?",
+  opts:{A:"<code>\"in\"</code>", B:"<code>\"out\"</code>", C:"<code>\"inout\"</code>", D:"<code>\"trigger\"</code>"},
+  exp:"Los triggers siempre llevan direction 'in'. (Repetida: mismo concepto que Mock 2 P7.)"},
+ en:{text:"A Function reads messages from an Azure Storage Queue and adds entities to Table Storage. In function.json, what value goes in the queue trigger's <code>direction</code>?",
+  exp:"Triggers always use direction 'in'. (Repeat: same concept as Mock 2 Q7.)"}},
+
+{n:19, dom:"C", type:"single", ans:"B",
+ es:{text:"Necesitas ver la información de diagnóstico de un Azure Container Instance durante su proceso de ARRANQUE. ¿Qué comando ejecutas?",
+  opts:{A:"<code>az container logs</code>", B:"<code>az container attach</code>", C:"<code>az container exec</code>", D:"<code>az container show</code>"},
+  exp:"attach conecta tu terminal al contenedor y muestra los eventos de diagnóstico del arranque además del stdout en tiempo real; logs solo muestra los logs del contenedor, sin los eventos de arranque."},
+ en:{text:"You need to view the diagnostic information of an Azure Container Instance during its STARTUP process. Which command do you run?",
+  exp:"attach connects your terminal to the container and shows startup diagnostic events plus stdout in real time; logs shows only the container's logs, without startup events."}},
+
+{n:20, dom:"I", type:"single", ans:"A",
+ es:{text:"APIM expone datos de productos a partners externos. Requisito: \"Modificar la URL de la petición para ajustarla al formato que espera el servicio web\". ¿Qué tipo de policy usas?",
+  opts:{A:"Inbound (<code>rewrite-uri</code>)", B:"Outbound", C:"Backend", D:"On-error"},
+  exp:"rewrite-uri en inbound transforma la petición antes de reenviarla al backend. (Repetida: misma sección inbound que la P7 de este mock y que validate-jwt en Simulacro 1 P31.)"},
+ en:{text:"APIM exposes product data to external partners. Requirement: \"Modify the request URL to conform to the web service's expected format.\" Which policy type do you use?",
+  opts:{A:"Inbound (<code>rewrite-uri</code>)", B:"Outbound", C:"Backend", D:"On-error"},
+  exp:"rewrite-uri in inbound transforms the request before forwarding it to the back end. (Repeat: same inbound section as Q7 of this mock and validate-jwt in Practice Exam 1 Q31.)"}},
+
+{n:21, dom:"C", type:"single", ans:"B",
+ es:{text:"Usarás Azure Functions con triggers no-HTTP en un lenguaje sin soporte nativo, mediante un custom handler. Tu servidor web (custom handler) tarda hasta 90 segundos en arrancar. ¿Cumple los requisitos de Azure Functions?",
+  opts:{A:"Sí", B:"No"},
+  exp:"No. Learn documenta como restricción que el servidor web del custom handler debe arrancar en menos de 60 segundos. (Ítem reescrito: el original hablaba de 'procesar peticiones en 90 s', pero el límite documentado de 60 s es de arranque del servidor; verificado en functions-custom-handlers.)"},
+ en:{text:"You will use Azure Functions with non-HTTP triggers in a natively unsupported language via a custom handler. Your custom handler web server takes up to 90 seconds to start. Does this meet Azure Functions requirements?",
+  opts:{A:"Yes", B:"No"},
+  exp:"No. Learn documents as a restriction that the custom handler web server must start within 60 seconds. (Item rewritten: the original said 'process requests within 90 s', but the documented 60 s limit is server startup; verified in functions-custom-handlers.)"}},
+
+{n:22, dom:"C", type:"single", ans:"B",
+ es:{text:"Una Function debe dispararse cuando se agregan archivos JPEG al contenedor <code>images</code>. Configuras el filtro <code>\"path\": \"images/jpeg\"</code>. ¿Cumple el requisito?",
+  opts:{A:"Sí", B:"No"},
+  exp:"No. \"images/jpeg\" apunta a un blob literal llamado 'jpeg'. El patrón correcto es <code>\"images/{name}.jpg\"</code> (o .jpeg). (Explicación corregida: la fuente proponía 'images/*.jpg', pero los blob triggers no usan comodines *; usan binding expressions {name}, verificado en Learn.)"},
+ en:{text:"A Function must trigger when JPEG files are added to the <code>images</code> container. You configure the filter <code>\"path\": \"images/jpeg\"</code>. Does this meet the requirement?",
+  opts:{A:"Yes", B:"No"},
+  exp:"No. \"images/jpeg\" points to a literal blob named 'jpeg'. The correct pattern is <code>\"images/{name}.jpg\"</code> (or .jpeg). (Explanation corrected: the source proposed 'images/*.jpg', but blob triggers don't use * wildcards; they use {name} binding expressions, verified on Learn.)"}},
+
+{n:23, dom:"C", type:"single", ans:"D",
+ es:{text:"Despliegas una imagen Docker personalizada en App Service en Linux y necesitas los logs de consola del contenedor en tiempo real. ¿Qué pareja de comandos usas?",
+  opts:{A:"<code>az webapp log download</code> ejecutado en bucle", B:"<code>az webapp log config --web-server-logging filesystem</code> y <code>az webapp restart</code>", C:"<code>az monitor activity-log list</code>", D:"<code>az webapp log config --docker-container-logging filesystem</code> y <code>az webapp log tail</code>"},
+  exp:"config --docker-container-logging filesystem habilita la captura de STDOUT/STDERR del contenedor y az webapp log tail hace el streaming en vivo. (Ítem corregido: la fuente respondía 'az webapp log stream', comando que no existe en Azure CLI; el documentado es log tail, verificado en Learn.)"},
+ en:{text:"You deploy a custom Docker image to App Service on Linux and need the container's console logs in real time. Which pair of commands do you use?",
+  opts:{A:"<code>az webapp log download</code> run in a loop", B:"<code>az webapp log config --web-server-logging filesystem</code> and <code>az webapp restart</code>", C:"<code>az monitor activity-log list</code>", D:"<code>az webapp log config --docker-container-logging filesystem</code> and <code>az webapp log tail</code>"},
+  exp:"config --docker-container-logging filesystem enables STDOUT/STDERR capture from the container and az webapp log tail streams live. (Item corrected: the source answered 'az webapp log stream', a command that doesn't exist in Azure CLI; the documented one is log tail, verified on Learn.)"}},
+
+{n:24, dom:"G", type:"multi", ans:["A","B"],
+ es:{text:"[SELECCIÓN MÚLTIPLE] Necesitas crear un certificado autofirmado en Azure Key Vault usando PowerShell. ¿Qué dos comandos requieres?",
+  opts:{A:"<code>New-AzKeyVaultCertificatePolicy</code> (con emisor Self)", B:"<code>Add-AzKeyVaultCertificate</code>", C:"<code>Import-AzKeyVaultCertificate</code>", D:"<code>New-SelfSignedCertificate</code>"},
+  exp:"New-AzKeyVaultCertificatePolicy define la policy (autofirmado, subject, validez) y Add-AzKeyVaultCertificate crea el certificado en el vault usando esa policy. Import es para certificados existentes; New-SelfSignedCertificate es de Windows, no de Key Vault."},
+ en:{text:"[MULTIPLE SELECTION] You need to create a self-signed certificate in Azure Key Vault using PowerShell. Which two commands do you require?",
+  opts:{A:"<code>New-AzKeyVaultCertificatePolicy</code> (with Self issuer)", B:"<code>Add-AzKeyVaultCertificate</code>", C:"<code>Import-AzKeyVaultCertificate</code>", D:"<code>New-SelfSignedCertificate</code>"},
+  exp:"New-AzKeyVaultCertificatePolicy defines the policy (self-signed, subject, validity) and Add-AzKeyVaultCertificate creates the certificate in the vault using that policy. Import is for existing certificates; New-SelfSignedCertificate is a Windows cmdlet, not Key Vault."}},
+
+{n:25, dom:"G", type:"single", ans:"A",
+ es:{text:"BackendApp1 debe autenticar únicamente cuentas del directorio de tu organización con Microsoft Identity Platform. ¿Qué tipo de cuenta eliges al registrar la app?",
+  opts:{A:"Accounts in this organizational directory only (single tenant)", B:"Accounts in any organizational directory (multitenant)", C:"Multitenant + cuentas personales Microsoft", D:"Solo cuentas personales Microsoft"},
+  exp:"Single tenant restringe la autenticación a las cuentas del tenant de tu organización, cumpliendo el requisito de seguridad."},
+ en:{text:"BackendApp1 must authenticate only accounts from your organization's directory with the Microsoft identity platform. Which account type do you choose when registering the app?",
+  opts:{A:"Accounts in this organizational directory only (single tenant)", B:"Accounts in any organizational directory (multitenant)", C:"Multitenant + personal Microsoft accounts", D:"Personal Microsoft accounts only"},
+  exp:"Single tenant restricts authentication to accounts in your organization's tenant, meeting the security requirement."}},
+
+{n:26, dom:"M", type:"multi", ans:["A","B"],
+ es:{text:"[SELECCIÓN MÚLTIPLE] ¿Cuáles son escenarios adecuados para el patrón Cache-Aside?",
+  opts:{A:"La caché no ofrece operaciones read-through/write-through nativas", B:"Datos relativamente estáticos que se cargan bajo demanda", C:"Datos que cambian constantemente y exigen consistencia estricta con el almacén", D:"Escrituras que deben aplicarse síncronamente en caché y base de datos"},
+  exp:"Cache-aside aplica cuando la caché no trae read/write-through y para datos que se leen bajo demanda y cambian poco. Para datos volátiles con consistencia estricta, el patrón pierde eficacia (riesgo de datos obsoletos)."},
+ en:{text:"[MULTIPLE SELECTION] Which are suitable scenarios for the Cache-Aside pattern?",
+  opts:{A:"The cache doesn't provide native read-through/write-through operations", B:"Relatively static data loaded into cache on demand", C:"Constantly changing data requiring strict consistency with the store", D:"Writes that must apply synchronously to cache and database"},
+  exp:"Cache-aside applies when the cache lacks read/write-through and for data read on demand that changes rarely. For volatile data with strict consistency, the pattern loses effectiveness (stale data risk)."}},
+
+{n:27, dom:"I", type:"single", ans:"B",
+ es:{text:"Tu Function App procesa eventos de un custom topic de Azure Event Grid. ¿Qué propiedad del event schema usas para permitir el filtrado en las suscripciones del custom topic?",
+  opts:{A:"<code>id</code>", B:"<code>subject</code>", C:"<code>eventTime</code>", D:"<code>dataVersion</code>"},
+  exp:"En custom topics tú defines el subject de cada evento y los suscriptores filtran con subjectBeginsWith/subjectEndsWith. (Relacionada con Simulacro 1 P38, que aplica subjectBeginsWith a eventos de Storage.)"},
+ en:{text:"Your Function App processes events from an Azure Event Grid custom topic. Which event schema property do you use to allow filtering on the custom topic's subscriptions?",
+  exp:"On custom topics you define each event's subject and subscribers filter with subjectBeginsWith/subjectEndsWith. (Related to Practice Exam 1 Q38, which applies subjectBeginsWith to Storage events.)"}},
+
+{n:28, dom:"I", type:"single", ans:"C",
+ es:{text:"Tu app solo debe recibir eventos de Event Grid emitidos por el servicio de máquinas virtuales o por DevTest Labs. En el JSON de la suscripción, ¿qué propiedad contiene esos filtros granulares?",
+  opts:{A:"<code>\"sqlFilter\"</code>", B:"<code>\"correlationFilter\"</code>", C:"<code>\"advancedFilters\"</code>", D:"<code>\"eventDomain\"</code>"},
+  exp:"advancedFilters permite condiciones sobre campos del evento (con operadores como StringIn/StringContains). sqlFilter y correlationFilter pertenecen a Service Bus, no a Event Grid."},
+ en:{text:"Your app must only receive Event Grid events emitted by the virtual machine service or DevTest Labs. In the subscription JSON, which property contains those granular filters?",
+  exp:"advancedFilters allows conditions on event fields (with operators like StringIn/StringContains). sqlFilter and correlationFilter belong to Service Bus, not Event Grid."}},
+
+{n:29, dom:"I", type:"single", ans:"B",
+ es:{text:"En un topic de Service Bus, cierta suscripción NO debe recibir ningún mensaje enviado al topic. ¿Qué filtro configuras?",
+  opts:{A:"TrueFilter", B:"Boolean filter (FalseFilter)", C:"SQL filter con <code>1=1</code>", D:"Correlation filter vacío"},
+  exp:"El FalseFilter (boolean filter en false) rechaza todos los mensajes de esa suscripción. TrueFilter y 1=1 hacen lo contrario: aceptan todo."},
+ en:{text:"On a Service Bus topic, a certain subscription must NOT receive any message sent to the topic. Which filter do you configure?",
+  opts:{A:"TrueFilter", B:"Boolean filter (FalseFilter)", C:"SQL filter with <code>1=1</code>", D:"Empty correlation filter"},
+  exp:"The FalseFilter (boolean filter set to false) rejects all messages for that subscription. TrueFilter and 1=1 do the opposite: they accept everything."}},
+
+{n:30, dom:"S", type:"single", ans:"C",
+ es:{text:"Completas un código que sube archivos a Azure Blob Storage (SDK .NET v12). ¿Qué clase usas para obtener la referencia a un blob concreto y subir su contenido?",
+  opts:{A:"<code>BlobContainerClient</code>", B:"<code>BlobServiceClient</code>", C:"<code>BlobClient</code>", D:"<code>StorageSharedKeyCredential</code>"},
+  exp:"BlobClient opera sobre un blob específico (Upload/Download). BlobContainerClient administra el contenedor y BlobServiceClient la cuenta; con GetBlobClient(nombre) obtienes el BlobClient."},
+ en:{text:"You complete code that uploads files to Azure Blob Storage (.NET SDK v12). Which class do you use to get a reference to a specific blob and upload its content?",
+  exp:"BlobClient operates on a specific blob (Upload/Download). BlobContainerClient manages the container and BlobServiceClient the account; GetBlobClient(name) returns the BlobClient."}},
+
+{n:31, dom:"I", type:"single", ans:"D",
+ es:{text:"Cuando Event Hubs persiste datos automáticamente en Azure Data Lake / Blob Storage (Capture), ¿en qué formato se escriben los archivos?",
+  opts:{A:"JSON", B:"CSV", C:"Parquet", D:"Apache Avro"},
+  exp:"Capture escribe en Apache Avro: formato binario compacto y rápido, con esquema incluido. (Repetida: idéntica al Simulacro 1 P44.)"},
+ en:{text:"When Event Hubs automatically persists data to Azure Data Lake / Blob Storage (Capture), in which format are the files written?",
+  opts:{A:"JSON", B:"CSV", C:"Parquet", D:"Apache Avro"},
+  exp:"Capture writes in Apache Avro: a compact, fast binary format with embedded schema. (Repeat: identical to Practice Exam 1 Q44.)"}},
+
+{n:32, dom:"C", type:"single", ans:"A",
+ es:{text:"Una Function debe dispararse cuando se agregan archivos .csv al contenedor <code>logs</code>. Configuras <code>\"path\": \"logs/{name}.csv\"</code>. ¿Cumple el requisito?",
+  opts:{A:"Sí", B:"No"},
+  exp:"Sí. {name}.csv es exactamente el patrón documentado para filtrar por extensión en blob triggers (functions-bindings-storage-blob-trigger); {name} captura cualquier nombre de archivo."},
+ en:{text:"A Function must trigger when .csv files are added to the <code>logs</code> container. You configure <code>\"path\": \"logs/{name}.csv\"</code>. Does this meet the requirement?",
+  opts:{A:"Yes", B:"No"},
+  exp:"Yes. {name}.csv is exactly the documented pattern for filtering by extension in blob triggers (functions-bindings-storage-blob-trigger); {name} captures any file name."}}
+];
+
+/* ================= STATE ================= */
+let examTime = 100*60;
+let Q = EXAM1;
+let curExam = 1;
+let lang = "es";
+let view = "start";           // start | exam | results
+let remaining = examTime;
+let timerId = null;
+let cur = 0;
+const answers = {};
+const locked = new Set();
+let finished = false;
+let result = null;            // {score, domScore, auto, usedSec}
+
+/* ================= LANG HELPERS ================= */
+function S(){ return L[lang]; }
+function qT(q){ return q[lang].text; }
+function qO(q){ return q[lang].opts || q.es.opts; }
+function qE(q){ return q[lang].exp; }
+function toggleLang(){
+  lang = lang==="es" ? "en" : "es";
+  document.documentElement.lang = lang;
+  refresh();
+}
+function refresh(){
+  document.getElementById("langBar").textContent = S().langBtn;
+  document.getElementById("submitBar").textContent = S().submit;
+  if(view==="start") renderStart();
+  else if(view==="exam"){ renderSide(); render(); }
+  else renderResults();
+}
+
+/* ================= START SCREEN ================= */
+function renderStart(){
+  const s = S();
+  let h = '<div class="toprow"><h1>'+s.title+'</h1>'
+    + '<button class="langbtn" onclick="toggleLang()">'+s.langBtn+'</button></div>'
+    + '<h2>'+s.rulesH+'</h2><ul class="rules">'
+    + s.rules.map(r=>'<li>'+r+'</li>').join('')
+    + '</ul><h2>'+s.chooseExam+'</h2>';
+  for(const id of [1,2,3]){
+    const m = EXAMS[id][lang];
+    h += '<div style="border:1.5px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:12px;">'
+       + '<strong>'+m.name+'</strong>'
+       + '<p class="muted" style="margin:6px 0 10px;">'+m.desc+'</p>'
+       + '<button class="btn" onclick="startExam('+id+')">'+s.start+'</button></div>';
+  }
+  document.getElementById("start").innerHTML = h;
+}
+
+/* ================= TIMER ================= */
+function startExam(id){
+  curExam = id || 1;
+  Q = ({1:EXAM1, 2:EXAM2, 3:EXAM3})[curExam];
+  examTime = EXAMS[curExam].time;
+  remaining = examTime;
+  document.getElementById("timer").textContent = String(Math.floor(examTime/60)).padStart(2,"0")+":00";
+  view = "exam";
+  document.getElementById("start").classList.add("hidden");
+  document.getElementById("exam").classList.remove("hidden");
+  document.getElementById("bar").classList.remove("hidden");
+  document.getElementById("langBar").textContent = S().langBtn;
+  document.getElementById("submitBar").textContent = S().submit;
+  timerId = setInterval(tick, 1000);
+  renderSide(); render();
+  window.addEventListener("beforeunload", beforeUnload);
+}
+function beforeUnload(e){ if(!finished){ e.preventDefault(); e.returnValue=""; } }
+function tick(){
+  remaining--;
+  const t = document.getElementById("timer");
+  const m = Math.floor(remaining/60), s = remaining%60;
+  t.textContent = String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+  if(remaining <= 600) t.classList.add("low");
+  if(remaining <= 0){ clearInterval(timerId); submit(true); }
+}
+
+/* ================= HELPERS ================= */
+function isAnswered(q){
+  const a = answers[q.n];
+  if(a == null) return false;
+  if(q.type==="order") return a.length === Object.keys(qO(q)).length;
+  if(q.type==="multi") return a.length > 0;
+  return true;
+}
+function lockIfSeries(idx){
+  const q = Q[idx];
+  if(q && q.series && isAnswered(q)) locked.add(q.n);
+}
+
+/* ================= RENDER ================= */
+function renderSide(){
+  const s = S();
+  document.getElementById("navTitle").textContent = s.navTitle;
+  document.getElementById("legend").innerHTML =
+    '<span class="dot" style="background:#dcebdd;border:1px solid #9ec4a4;"></span>'+s.legend[0]+'<br>'
+    + '<span class="dot" style="background:#fff;border:1px solid var(--border);"></span>'+s.legend[1]+'<br>'
+    + '<span class="dot" style="background:#e9ebef;border:1px solid var(--lock);"></span>'+s.legend[2];
+}
+function render(){
+  const q = Q[cur];
+  const s = S();
+  const card = document.getElementById("qcard");
+  let h = "";
+  h += '<span class="qdom">'+s.domNames[q.dom]+'</span>';
+  if(q.series){
+    const sr = SERIES[q.series][lang];
+    h += '<div class="scenario"><strong>'+sr.title+'</strong><br>'+sr.text+'</div>';
+    h += locked.has(q.n)
+      ? '<div class="locknote">'+s.seriesLocked+'</div>'
+      : '<div class="locknote" style="background:#fff8e8;border-color:#edd9a3;color:#7a5c10;">'+sr.note+'</div>';
+  }
+  h += '<div class="qtext"><strong>'+q.n+'.</strong> '+qT(q)+'</div>';
+
+  const isLocked = locked.has(q.n);
+  if(q.type==="order"){
+    const seq = answers[q.n] || [];
+    h += '<div>';
+    for(const [k,v] of Object.entries(qO(q))){
+      const pos = seq.indexOf(k);
+      h += '<div class="ordItem'+(pos>=0?' done':'')+'" onclick="ordClick(\''+k+'\')">'
+         + '<div class="pos">'+(pos>=0?(pos+1)+'º':'—')+'</div><div>'+k+') '+v+'</div></div>';
+    }
+    h += '</div><button class="btn sec" onclick="ordReset()">'+s.resetOrder+'</button>';
+  } else {
+    const type = q.type==="multi" ? "checkbox" : "radio";
+    if(q.type==="multi") h += '<p class="muted" style="margin-bottom:10px;">'+s.selectN(q.ans.length)+'</p>';
+    for(const [k,v] of Object.entries(qO(q))){
+      const a = answers[q.n];
+      const sel = q.type==="multi" ? (a||[]).includes(k) : a===k;
+      h += '<label class="opt'+(sel?' sel':'')+(isLocked?' dis':'')+'">'
+         + '<input type="'+type+'" name="q'+q.n+'" value="'+k+'"'+(sel?' checked':'')+(isLocked?' disabled':'')
+         + ' onchange="pick(\''+k+'\', this.checked)">'
+         + '<span class="lbl"><strong>'+k+')</strong> '+v+'</span></label>';
+    }
+  }
+
+  h += '<div class="navrow">'
+     + '<button class="btn sec" onclick="go(cur-1)"'+(cur===0?' disabled':'')+'>'+s.prev+'</button>'
+     + '<button class="btn" onclick="go(cur+1)"'+(cur===Q.length-1?' disabled':'')+'>'+s.next+'</button>'
+     + '</div>';
+
+  card.innerHTML = h;
+  renderNav();
+  const answeredCount = Q.filter(x=>isAnswered(x)).length;
+  document.getElementById("prog").textContent = s.progress(cur+1, Q.length, answeredCount);
+}
+function renderNav(){
+  const g = document.getElementById("navgrid");
+  g.innerHTML = Q.map((q,i)=>{
+    let cls = "";
+    if(locked.has(q.n)) cls = "lockedq";
+    else if(isAnswered(q)) cls = "answered";
+    if(i===cur) cls += " current";
+    return '<button class="'+cls+'" onclick="go('+i+')">'+q.n+'</button>';
+  }).join("");
+}
+
+/* ================= INTERACTION ================= */
+function pick(k, checked){
+  const q = Q[cur];
+  if(locked.has(q.n)) return;
+  if(q.type==="multi"){
+    let a = answers[q.n] || [];
+    if(checked){ if(!a.includes(k)) a.push(k); }
+    else a = a.filter(x=>x!==k);
+    answers[q.n] = a;
+  } else {
+    answers[q.n] = k;
+  }
+  render();
+}
+function ordClick(k){
+  const q = Q[cur];
+  let seq = answers[q.n] || [];
+  if(seq.includes(k)) return;
+  seq.push(k);
+  answers[q.n] = seq;
+  render();
+}
+function ordReset(){
+  delete answers[Q[cur].n];
+  render();
+}
+function go(i){
+  if(i<0 || i>=Q.length) return;
+  lockIfSeries(cur);
+  cur = i;
+  render();
+  window.scrollTo({top:0});
+}
+
+/* ================= GRADING ================= */
+function gradeQ(q){
+  const a = answers[q.n];
+  if(a==null) return false;
+  if(q.type==="multi") return Array.isArray(a) && [...a].sort().join()===[...q.ans].sort().join();
+  if(q.type==="order") return Array.isArray(a) && a.join()===q.ans.join();
+  return a===q.ans;
+}
+function fmtAns(a){
+  if(a==null) return S().unanswered;
+  return Array.isArray(a) ? "("+a.join(", ")+")" : a;
+}
+function confirmSubmit(){
+  const unanswered = Q.filter(q=>!isAnswered(q)).length;
+  const msg = unanswered>0 ? S().confirmUn(unanswered) : S().confirmOk;
+  if(confirm(msg)) submit(false);
+}
+function submit(auto){
+  finished = true;
+  clearInterval(timerId);
+  window.removeEventListener("beforeunload", beforeUnload);
+  lockIfSeries(cur);
+
+  let score = 0;
+  const domScore = {C:0,I:0,S:0,G:0,M:0};
+  for(const q of Q){ if(gradeQ(q)){ score++; domScore[q.dom]++; } }
+  result = {score, domScore, auto, usedSec: examTime - Math.max(remaining,0)};
+  view = "results";
+  document.getElementById("exam").classList.add("hidden");
+  document.getElementById("bar").classList.add("hidden");
+  renderResults();
+  window.scrollTo({top:0});
+}
+function renderResults(){
+  const s = S();
+  const {score, domScore, auto, usedSec} = result;
+  const target = Math.ceil(Q.length*0.8);
+  const pass = score >= target;
+  const usedMin = Math.floor(usedSec/60), usedS = usedSec%60;
+
+  let h = '<div class="card">';
+  h += '<div class="toprow"><h1>'+s.resultH+' — '+EXAMS[curExam][lang].name+'</h1>'
+     + '<button class="langbtn" onclick="toggleLang()">'+s.langBtn+'</button></div>';
+  if(auto) h += '<div class="locknote">'+s.autoNote+'</div>';
+  h += '<div class="score '+(pass?"pass":"fail")+'">'+score+' / '+Q.length+'</div>'
+    + '<p class="muted">'+(pass?s.passMsg(target,Q.length):s.failMsg(target,Q.length))+'</p>'
+    + '<p class="muted">'+s.timeUsed(usedMin,usedS,Math.round(examTime/60))+'</p>';
+
+  const totals = {C:0,I:0,S:0,G:0,M:0};
+  for(const q of Q) totals[q.dom]++;
+  h += '<h2 style="margin-top:18px;">'+s.domH+'</h2><table><tr><th>'+s.domCol+'</th><th>'+s.ptsCol+'</th><th>%</th></tr>';
+  for(const d of ["C","I","S","G","M"]){
+    const pct = Math.round(100*domScore[d]/totals[d]);
+    h += '<tr><td>'+s.domNames[d]+'</td><td>'+domScore[d]+' / '+totals[d]+'</td>'
+       + '<td style="color:'+(pct>=80?"var(--ok)":"var(--bad)")+';font-weight:600;">'+pct+'%</td></tr>';
+  }
+  h += '</table>';
+
+  const ansStr = Q.map(q=>q.n+"-"+(answers[q.n]==null?"∅":fmtAns(answers[q.n]))).join(", ");
+  h += '<h2 style="margin-top:10px;">'+s.yourAnsH+'</h2>'
+     + '<textarea id="ansString" rows="4" readonly>'+ansStr+'</textarea>';
+
+  h += '<div class="filterrow"><button class="btn sec" onclick="filterRev(false)">'+s.viewAll+'</button> '
+     + '<button class="btn" onclick="filterRev(true)">'+s.viewWrong(Q.length-score)+'</button> '
+     + '<button class="btn sec" onclick="location.reload()">'+s.backMenu+'</button></div>';
+  h += '</div><div style="margin-top:16px;" id="revList">';
+
+  for(const q of Q){
+    const ok = gradeQ(q);
+    h += '<div class="rev '+(ok?"right":"wrong")+'" data-ok="'+ok+'">'
+       + '<div class="qn">'+q.n+'. <span class="muted" style="font-weight:400;">['+s.domNames[q.dom]+']</span>'
+       + '<span class="tag '+(ok?"ok":"ko")+'">'+(ok?s.correct:s.incorrect)+'</span></div>'
+       + '<div style="font-size:.93rem;">'+qT(q)+'</div>'
+       + '<div class="yours">'+s.yourAns+': <strong>'+fmtAns(answers[q.n])+'</strong> · '+s.corrAns+': <strong>'+fmtAns(q.ans)+'</strong></div>'
+       + '<div class="exp">'+qE(q)+'</div></div>';
+  }
+  h += '</div>';
+
+  const r = document.getElementById("results");
+  r.innerHTML = h;
+  r.classList.remove("hidden");
+}
+function filterRev(onlyWrong){
+  document.querySelectorAll("#revList .rev").forEach(el=>{
+    el.style.display = (onlyWrong && el.dataset.ok==="true") ? "none" : "";
+  });
+}
+
+/* ================= INIT ================= */
+renderStart();
+</script>
+</body>
+</html>
